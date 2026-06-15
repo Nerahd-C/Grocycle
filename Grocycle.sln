@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37027.9 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grocycle", "Grocycle\Grocycle.csproj", "{FE27BDCF-16C7-44D5-91D8-A71DD541EFD0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE27BDCF-16C7-44D5-91D8-A71DD541EFD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE27BDCF-16C7-44D5-91D8-A71DD541EFD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE27BDCF-16C7-44D5-91D8-A71DD541EFD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE27BDCF-16C7-44D5-91D8-A71DD541EFD0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D1463C40-DD0E-4B04-A8BD-AC55B67DB172}
+	EndGlobalSection
+EndGlobal
