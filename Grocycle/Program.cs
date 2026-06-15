@@ -264,19 +264,6 @@ namespace Grocycle
             Console.ReadKey();
         }
 
-        static void Placeholder(string module)
-        {
-            Console.Clear();
-
-            Console.WriteLine("=========================================");
-            Console.WriteLine(module);
-            Console.WriteLine("=========================================\n");
-
-            Console.WriteLine("This module will be implemented in Part 2.");
-
-            Pause();
-        }
-
         static void InventoryMenu()
         {
             while (true)
