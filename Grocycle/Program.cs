@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Security.Principal;
 
 namespace Grocycle
 {
@@ -11,6 +12,10 @@ namespace Grocycle
     {
         static string CurrentUser;
         static string UserFolder;
+        static Queue<string> ExpiringItems =
+            new Queue<string>();
+        static Stack<string> WasteHistory =
+            new Stack<string>();
 
         static void Main(string[] args)
         {
@@ -38,33 +43,24 @@ namespace Grocycle
                 string choice = Console.ReadLine();
 
                 switch (choice)
-                    {
-                        case "1":
-                        InventoryMenu();
+                {
+                    case "1":
+                        Login();
                         break;
 
-                        case "2":
-                        GroceryPlanner();
+                    case "2":
+                        SignUp();
                         break;
 
-                        case "3":
-                        ExpiryMenu();
+                    case "3":
+                        Environment.Exit(0);
                         break;
 
-                        case "4":
-                        WasteMenu();
-                        break;
-
-                        case "7":
-                        CurrentUser = "";
-                        UserFolder = "";
-                        return;
-
-                        default:
+                    default:
                         Console.WriteLine("\nInvalid Choice!");
                         Pause();
                         break;
-                    }
+                }
             }
         }
 
@@ -169,7 +165,7 @@ namespace Grocycle
 
         static void Dashboard()
         {
-           while (true)
+            while (true)
             {
                 Console.Clear();
 
@@ -216,13 +212,11 @@ namespace Grocycle
 
                 Console.WriteLine("\n=========================================\n");
 
-                Console.WriteLine("[1] Inventory Management");
-                Console.WriteLine("[2] Grocery Planner");
-                Console.WriteLine("[3] Expiry Monitor");
-                Console.WriteLine("[4] Waste Tracker");
-                Console.WriteLine("[5] Budget Analysis");
-                Console.WriteLine("[6] Monthly Report");
-                Console.WriteLine("[7] Logout");
+                Console.WriteLine("[1] Account Information");
+                Console.WriteLine("[2] Inventory Management");
+                Console.WriteLine("[3] Grocery Planner");
+                Console.WriteLine("[4] Expiry Checker");
+                Console.WriteLine("[5] Log out");
 
                 Console.Write("\nEnter Choice: ");
 
@@ -230,41 +224,102 @@ namespace Grocycle
 
                 switch (choice)
                 {
+
                     case "1":
+
+                        AccountInformation();
+                        break;
+
+                    case "2":
                         InventoryMenu();
                         break;
 
-                    case "2":  
+                    case "3":
                         GroceryPlanner();
                         break;
 
-                    case "3":
-                        Placeholder("Expiry Monitor");
+                    case "4":
+                        ExpiryMenu();
                         break;
 
-                   case "4":
-                        Placeholder("Waste Tracker");
-                       break;
-
-                   case "5":
-                        Placeholder("Budget Analysis");
-                       break;
-
-                   case "6":
-                        Placeholder("Monthly Report");
-                        break;
-
-                    case "7":
+                    case "5":
                         CurrentUser = "";
                         UserFolder = "";
-                       return;
+                        return;
 
                     default:
-                       Console.WriteLine("\nInvalid Choice!");
-                       Pause();
-                      break;
+                        Console.WriteLine("\nInvalid Choice!");
+                        Pause();
+                        break;
                 }
             }
+        }
+
+        static void AccountInformation()
+        {
+            Console.Clear();
+
+            string profilePath =
+            Path.Combine(UserFolder, "Profile.txt");
+
+            string[] profile =
+                File.ReadAllLines(profilePath);
+
+            Console.WriteLine("=================================");
+            Console.WriteLine("      ACCOUNT INFORMATION");
+            Console.WriteLine("=================================\n");
+
+            foreach (string line in profile)
+            {
+                Console.WriteLine(
+                    line.Replace("|", ": "));
+            }
+
+            Console.WriteLine();
+            Console.Write("Update household information? (Y/N): ");
+
+            string choice =
+                Console.ReadLine().ToUpper();
+
+            if (choice != "Y")
+                return;
+
+            
+
+
+            Console.WriteLine("\n\n=================================");
+            Console.WriteLine(" UPDATE HOUSEHOLD INFORMATION");
+            Console.WriteLine("=================================\n");
+
+            Console.Write("Monthly Grocery Budget: $");
+            string budget =
+                Console.ReadLine();
+
+            Console.Write("Supermarket Visits Per Month: ");
+            string visits =
+                Console.ReadLine();
+
+            Console.Write("Number of Family Members: ");
+            string members =
+                Console.ReadLine();
+
+            string[] newProfile =
+            {
+                $"Username|{CurrentUser}",
+                $"Budget|{budget}",
+                $"Visits|{visits}",
+                $"Members|{members}"
+    };
+
+            File.WriteAllLines(
+                profilePath,
+                newProfile);
+
+            Console.WriteLine();
+            Console.WriteLine(
+                "Household information updated successfully!");
+
+            Pause();
         }
 
         static void Pause()
@@ -283,11 +338,13 @@ namespace Grocycle
                 Console.WriteLine("         INVENTORY MANAGEMENT");
                 Console.WriteLine("=========================================");
 
-                Console.WriteLine("[1] View Inventory");
-                Console.WriteLine("[2] Add Item");
-                Console.WriteLine("[3] Update Quantity");
-                Console.WriteLine("[4] Remove Item");
-                Console.WriteLine("[5] Back");
+                ViewInventory();
+
+
+                Console.WriteLine("\n[1] Add Item");
+                Console.WriteLine("[2] Update Quantity");
+                Console.WriteLine("[3] Remove Item");
+                Console.WriteLine("[4] Back");
 
                 Console.Write("\nChoice: ");
 
@@ -296,23 +353,24 @@ namespace Grocycle
                 switch (choice)
                 {
                     case "1":
-                        ViewInventory();
-                        break;
-
-                    case "2":
                         AddInventory();
                         break;
 
-                    case "3":
+                    case "2":
                         UpdateInventory();
                         break;
 
-                    case "4":
+                    case "3":
                         RemoveInventory();
                         break;
 
-                    case "5":
+                    case "4":
                         return;
+
+                    default:
+                        Console.WriteLine("Please input a valid option...");
+                        break;
+
                 }
             }
         }
@@ -333,11 +391,23 @@ namespace Grocycle
             string inventoryPath =
                 Path.Combine(UserFolder, "Inventory.txt");
 
-            File.AppendAllText(
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(quantity) || string.IsNullOrEmpty(expiry))
+            {
+                Console.WriteLine();
+                Console.WriteLine("No information entered. Returning to menu...");
+                Console.ReadKey();
+                return;
+            }
+
+
+
+                Console.WriteLine("\nItem Added!");
+
+                File.AppendAllText(
                 inventoryPath,
                 $"{name}|{quantity}|{expiry}\n");
-
-            Console.WriteLine("\nItem Added!");
+            
+            
 
             Pause();
         }
@@ -372,12 +442,10 @@ namespace Grocycle
                 {
                     string[] data = item.Split('|');
 
-                    Console.WriteLine(
-                        $"{data[0]}\t\t{data[1]}\t{data[2]}");
+                    Console.WriteLine($"{data[0]}\t\t{data[1]}\t{data[2]}");
                 }
             }
 
-            Pause();
         }
 
         static void UpdateInventory()
@@ -528,7 +596,31 @@ namespace Grocycle
             Console.WriteLine(
                 "Suggested purchases are based on low inventory.");
 
-            Pause(); 
+            Pause();
+        }
+
+        static void RecordPurchase()
+        {
+            Console.Clear();
+
+            Console.Write("Item Name: ");
+            string item = Console.ReadLine();
+
+            Console.Write("Cost: ");
+            string cost = Console.ReadLine();
+
+            string purchasePath =
+                Path.Combine(UserFolder,
+                "Purchases.txt");
+
+            File.AppendAllText(
+                purchasePath,
+                $"{item}|{cost}\n");
+
+            Console.WriteLine(
+                "\nPurchase Recorded!");
+
+            Pause();
         }
 
         static void GenerateShoppingList()
@@ -602,7 +694,7 @@ namespace Grocycle
         {
         }
 
-   
+
         static void SaveUserData()
         {
         }
