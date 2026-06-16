@@ -38,24 +38,33 @@ namespace Grocycle
                 string choice = Console.ReadLine();
 
                 switch (choice)
-                {
-                    case "1":
-                        Login();
+                    {
+                        case "1":
+                        InventoryMenu();
                         break;
 
-                    case "2":
-                        SignUp();
+                        case "2":
+                        GroceryPlanner();
                         break;
 
-                    case "3":
-                        Environment.Exit(0);
+                        case "3":
+                        ExpiryMenu();
                         break;
 
-                    default:
+                        case "4":
+                        WasteMenu();
+                        break;
+
+                        case "7":
+                        CurrentUser = "";
+                        UserFolder = "";
+                        return;
+
+                        default:
                         Console.WriteLine("\nInvalid Choice!");
                         Pause();
                         break;
-                }
+                    }
             }
         }
 
