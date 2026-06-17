@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Security.Principal;
+using System.Globalization;
 
 namespace Grocycle
 {
@@ -30,10 +31,23 @@ namespace Grocycle
             {
                 Console.Clear();
 
-                Console.WriteLine("=========================================");
-                Console.WriteLine("              GROCYCLE");
-                Console.WriteLine(" Smart Grocery Planner (SDG 12)");
-                Console.WriteLine("=========================================\n");
+                Console.WriteLine("=======================================================================================================================");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(@"
+
+                              ██████╗ ██████╗  ██████╗  ██████╗██╗   ██╗ ██████╗██╗     ███████╗
+                             ██╔════╝ ██╔══██╗██╔═══██╗██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝
+                             ██║  ███╗██████╔╝██║   ██║██║      ╚████╔╝ ██║     ██║     █████╗
+                             ██║   ██║██╔══██╗██║   ██║██║       ╚██╔╝  ██║     ██║     ██╔══╝
+                             ╚██████╔╝██║  ██║╚██████╔╝╚██████╗   ██║   ╚██████╗███████╗███████╗
+                              ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝
+
+                                                 SMART GROCERY PLANNER 
+                                      SDG 12: Responsible Consumption & Production
+
+                                    ");
+                Console.ResetColor();
+                Console.WriteLine("=======================================================================================================================\n");
 
                 Console.WriteLine("[1] Login");
                 Console.WriteLine("[2] Sign Up");
@@ -57,7 +71,7 @@ namespace Grocycle
                         break;
 
                     default:
-                        Console.WriteLine("\nInvalid Choice!");
+                        Console.WriteLine("\nPlease input a valid option.");
                         Pause();
                         break;
                 }
@@ -67,100 +81,175 @@ namespace Grocycle
         static void SignUp()
         {
             Console.Clear();
-
-            Console.WriteLine("=========================================");
-            Console.WriteLine("                SIGN UP");
-            Console.WriteLine("=========================================\n");
-
-            Console.Write("Create Username: ");
-            string username = Console.ReadLine().Trim();
-
-            string userFolder = Path.Combine("Users", username);
-
-            if (Directory.Exists(userFolder))
+            while (true)
             {
-                Console.WriteLine("\nUsername already exists!");
-                Pause();
-                return;
-            }
+                Console.WriteLine("=========================================");
+                Console.WriteLine("                SIGN UP");
+                Console.WriteLine("=========================================\n");
 
-            Console.Write("\nMonthly Grocery Budget ($): ");
-            string budget = Console.ReadLine();
+                Console.Write("Create Username: ");
+                string username = Console.ReadLine().Trim().ToLower();
 
-            Console.Write("Supermarket Visits Per Month: ");
-            string visits = Console.ReadLine();
-
-            Console.Write("Number of Family Members: ");
-            string members = Console.ReadLine();
-
-            Directory.CreateDirectory(userFolder);
-
-            File.WriteAllLines(
-                Path.Combine(userFolder, "Profile.txt"),
-                new string[]
+                if (string.IsNullOrEmpty(username))
                 {
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter a username.\n");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
+
+                string userFolder = Path.Combine("Users", username);
+
+                if (Directory.Exists(userFolder))
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Username already exists!\n");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
+
+                Console.Write("Password: ");
+                string password = Console.ReadLine().Trim();
+
+                if (string.IsNullOrEmpty(password))
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter a password.\n" +
+                        "");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
+
+                Console.Write("Confirm Password: ");
+                string repassword = Console.ReadLine();
+
+                if (password != repassword)
+                {
+                    
+                    Console.WriteLine("\nPasswords do not match.\n");
+                    Pause();
+                    Console.Clear();
+                    continue;
+
+                }
+
+                
+
+                Console.Write("\nMonthly Grocery Budget ($): ");
+                string budget = Console.ReadLine();
+
+                Console.Write("Supermarket Visits Per Month: ");
+                string visits = Console.ReadLine();
+
+                Console.Write("Number of Family Members: ");
+                string members = Console.ReadLine();
+
+                Directory.CreateDirectory(userFolder);
+
+                File.WriteAllLines(
+                    Path.Combine(userFolder, "Profile.txt"),
+                    new string[]
+                    {
                     $"Username|{username}",
+                    $"Password|{password}",
                     $"Budget|{budget}",
                     $"Visits|{visits}",
                     $"Members|{members}"
-                });
+                    });
 
-            File.WriteAllLines(
-                Path.Combine(userFolder, "Points.txt"),
-                new string[]
-                {
+                File.WriteAllLines(
+                    Path.Combine(userFolder, "Points.txt"),
+                    new string[]
+                    {
                     "Points|0",
                     "Rank|Eco Beginner"
-                });
+                    });
 
-            File.Create(
-                Path.Combine(userFolder, "Inventory.txt"))
-                .Close();
+                File.Create(
+                    Path.Combine(userFolder, "Inventory.txt"))
+                    .Close();
 
-            File.Create(
-                Path.Combine(userFolder, "Purchases.txt"))
-                .Close();
+                File.Create(
+                    Path.Combine(userFolder, "Purchases.txt"))
+                    .Close();
 
-            File.Create(
-                Path.Combine(userFolder, "Waste.txt"))
-                .Close();
+                File.Create(
+                    Path.Combine(userFolder, "Waste.txt"))
+                    .Close();
 
-            File.Create(
-                Path.Combine(userFolder, "Reports.txt"))
-                .Close();
+                File.Create(
+                    Path.Combine(userFolder, "Reports.txt"))
+                    .Close();
 
-            Console.WriteLine("\nAccount Created Successfully!");
-            Pause();
+                Console.WriteLine("\nAccount Created Successfully!");
+                Pause();
+                break;
+            }
         }
 
         static void Login()
         {
 
             Console.Clear();
-
-            Console.WriteLine("=========================================");
-            Console.WriteLine("                 LOGIN");
-            Console.WriteLine("=========================================\n");
-
-            Console.Write("Username: ");
-            string username = Console.ReadLine().Trim();
-
-            string userFolder = Path.Combine("Users", username);
-
-            if (!Directory.Exists(userFolder))
+            while (true)
             {
-                Console.WriteLine("\nAccount not found!");
+                Console.WriteLine("=========================================");
+                Console.WriteLine("                 LOGIN");
+                Console.WriteLine("=========================================\n");
+
+                Console.Write("Username: ");
+                string username = Console.ReadLine().Trim();
+
+                string userFolder = Path.Combine("Users", username);
+
+                if (!Directory.Exists(userFolder))
+                {
+                    Console.WriteLine("\nAccount not found!");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
+
+                Console.Write("Password: ");
+                string password = Console.ReadLine().Trim();
+
+                string profilePath =
+                    Path.Combine(userFolder, "Profile.txt");
+
+                string[] profile = File.ReadAllLines(profilePath);
+
+                string savedPassword = "";
+
+                foreach (string pass in profile)
+                {
+                    string[] data = pass.Split('|');
+
+                    if (data[0] == "Password")
+                    {
+                        savedPassword = data[1];
+                    }
+                }
+
+                if (password != savedPassword)
+                {
+                    Console.WriteLine("\nIncorrect Password!");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
+
+                CurrentUser = username;
+                UserFolder = userFolder;
+
+                Console.WriteLine("\nLogin Successful!");
                 Pause();
-                return;
+
+                Dashboard();
+                break;
             }
-
-            CurrentUser = username;
-            UserFolder = userFolder;
-
-            Console.WriteLine("\nLogin Successful!");
-            Pause();
-
-            Dashboard();
         }
 
         static void Dashboard()
@@ -199,9 +288,23 @@ namespace Grocycle
                     }
                 }
 
-                Console.WriteLine("=========================================");
-                Console.WriteLine("               GROCYCLE");
-                Console.WriteLine("=========================================\n");
+                Console.WriteLine("=======================================================================================================================");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(@"
+
+                              ██████╗ ██████╗  ██████╗  ██████╗██╗   ██╗ ██████╗██╗     ███████╗
+                             ██╔════╝ ██╔══██╗██╔═══██╗██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝
+                             ██║  ███╗██████╔╝██║   ██║██║      ╚████╔╝ ██║     ██║     █████╗
+                             ██║   ██║██╔══██╗██║   ██║██║       ╚██╔╝  ██║     ██║     ██╔══╝
+                             ╚██████╔╝██║  ██║╚██████╔╝╚██████╗   ██║   ╚██████╗███████╗███████╗
+                              ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝
+
+                                                 SMART GROCERY PLANNER 
+                                      SDG 12: Responsible Consumption & Production
+
+                                    ");
+                Console.ResetColor();
+                Console.WriteLine("=======================================================================================================================\n");
 
                 Console.WriteLine($"Welcome, {CurrentUser}");
                 Console.WriteLine();
@@ -210,7 +313,7 @@ namespace Grocycle
                 Console.WriteLine($"Store Visits   : {visits}");
                 Console.WriteLine($"Family Members : {members}");
 
-                Console.WriteLine("\n=========================================\n");
+                Console.WriteLine("\n=======================================================================================================================\n");
 
                 Console.WriteLine("[1] Account Information");
                 Console.WriteLine("[2] Inventory Management");
