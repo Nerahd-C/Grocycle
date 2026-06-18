@@ -87,6 +87,27 @@ namespace Grocycle
                 Console.WriteLine("                SIGN UP");
                 Console.WriteLine("=========================================\n");
 
+                Console.Write("Enter Email: ");
+                string gmail = Console.ReadLine().Trim();
+
+                if (string.IsNullOrEmpty(gmail))
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter email account.\n");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
+
+                if (!gmail.EndsWith("@gmail.com"))
+                {
+                    Console.WriteLine("Invalid Gmail address!");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
+
+
                 Console.Write("Create Username: ");
                 string username = Console.ReadLine().Trim().ToLower();
 
@@ -155,6 +176,7 @@ namespace Grocycle
                     {
                     $"Username|{username}",
                     $"Password|{password}",
+                    $"Gmail|{gmail}",
                     $"Budget|{budget}",
                     $"Visits|{visits}",
                     $"Members|{members}"
@@ -233,6 +255,28 @@ namespace Grocycle
                     }
                 }
 
+                if (string.IsNullOrEmpty(password))
+                {
+                    Console.WriteLine();
+                    Console.Write("Forgot Password?(Y/N): ");
+                    string choice = Console.ReadLine().ToLower();
+
+                    if (choice == "y")
+                    {
+                        Console.Clear();
+                        ChangePassword();
+                    }
+
+                    else if (choice == "n")
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Please retry password.");
+                        Pause();
+                        Console.Clear();
+                        continue;
+                    }
+                }
+
                 if (password != savedPassword)
                 {
                     Console.WriteLine("\nIncorrect Password!");
@@ -240,6 +284,8 @@ namespace Grocycle
                     Console.Clear();
                     continue;
                 }
+
+                
 
                 CurrentUser = username;
                 UserFolder = userFolder;
@@ -318,8 +364,7 @@ namespace Grocycle
                 Console.WriteLine("[1] Account Information");
                 Console.WriteLine("[2] Inventory Management");
                 Console.WriteLine("[3] Grocery Planner");
-                Console.WriteLine("[4] Expiry Checker");
-                Console.WriteLine("[5] Log out");
+                Console.WriteLine("[4] Log out");
 
                 Console.Write("\nEnter Choice: ");
 
@@ -342,10 +387,6 @@ namespace Grocycle
                         break;
 
                     case "4":
-                        ExpiryMenu();
-                        break;
-
-                    case "5":
                         CurrentUser = "";
                         UserFolder = "";
                         return;
@@ -475,6 +516,133 @@ namespace Grocycle
                         break;
 
                 }
+            }
+        }
+
+        static void ChangePassword()
+        {
+
+            while (true)
+            {
+                Console.Write("Enter username: ");
+                string username = Console.ReadLine();
+
+                string profilePath = Path.Combine("Users", username, "Profile.txt");
+
+                if (!File.Exists(profilePath))
+                {
+                    Console.WriteLine("Account not found please check username.");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
+
+
+                Console.Write("Enter Gmail: ");
+                string gmail = Console.ReadLine();
+
+                if (!gmail.EndsWith("@gmail.com"))
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Invalid Gmail address!");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
+
+                string[] profile =
+                    File.ReadAllLines(profilePath);
+
+                string savedGmail = "";
+
+                foreach (string line in profile)
+                {
+                    string[] data = line.Split('|');
+
+                    if (data[0] == "Gmail")
+                    {
+                        savedGmail = data[1];
+                    }
+                }
+
+                if (gmail.ToLower() != savedGmail.ToLower())
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Gmail does not match account.");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
+
+                Console.Write("Confirm Gmail account(Y/N): ");
+                string confirmation = Console.ReadLine().ToLower();
+
+                if (confirmation != "y")
+                {
+                    Console.WriteLine("Verification cancelled.");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
+
+                Random rnd = new Random();
+                int numcode = rnd.Next(1000,9999);
+
+                Console.WriteLine($"An OTP has been sent to {gmail}");
+                Console.WriteLine($"Hello {username}, your OTP is {numcode}");
+
+                Pause();
+                Console.Clear();
+
+                Console.WriteLine("=========================================");
+                Console.WriteLine("         PLEASE ENTER VERIFICATION CODE");
+                Console.WriteLine("=========================================\n");
+
+                Console.Write("Enter code: ");
+                string code = Console.ReadLine();
+                Console.WriteLine("----");
+
+                if (code != numcode.ToString())
+                {
+                    Console.WriteLine("Incorrect verification code!");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
+
+                Console.Write("Enter New Password: ");
+                string newpass = Console.ReadLine();
+
+                Console.Write("Confirm New Password: ");
+                string confirmnewpass = Console.ReadLine();
+
+                if (newpass != confirmnewpass)
+                {
+
+                    Console.WriteLine("\nPasswords do not match.\n");
+                    Pause();
+                    Console.Clear();
+                    continue;
+
+                }
+
+                
+
+                for (int i = 0; i < profile.Length; i++)
+                {
+                    if (profile[i].StartsWith("Password|"))
+                    {
+                        profile[i] =
+                            $"Password|{newpass}";
+                    }
+                }
+
+                File.WriteAllLines(profilePath, profile);
+
+                Console.WriteLine("\nPassword Updated Successfully!");
+                Pause();
+                Console.Clear();
+                break;
             }
         }
 
