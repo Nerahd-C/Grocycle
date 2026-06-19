@@ -653,16 +653,16 @@ namespace Grocycle
             Console.Write("Item Name: ");
             string name = Console.ReadLine();
 
+            Console.Write("Price: $");
+            string price = Console.ReadLine();
+
             Console.Write("Quantity: ");
             string quantity = Console.ReadLine();
-
-            Console.Write("Expiry Date (MM/DD/YYYY): ");
-            string expiry = Console.ReadLine();
 
             string inventoryPath =
                 Path.Combine(UserFolder, "Inventory.txt");
 
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(quantity) || string.IsNullOrEmpty(expiry))
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(price) || string.IsNullOrEmpty(quantity))
             {
                 Console.WriteLine();
                 Console.WriteLine("No information entered. Returning to menu...");
@@ -676,7 +676,7 @@ namespace Grocycle
 
                 File.AppendAllText(
                 inventoryPath,
-                $"{name}|{quantity}|{expiry}\n");
+                $"{name}|{price}|{quantity}\n");
             
             
 
@@ -693,6 +693,8 @@ namespace Grocycle
             string[] items =
                 File.ReadAllLines(inventoryPath);
 
+            double grandTotal = 0;
+
             Console.WriteLine("=========================================");
             Console.WriteLine("               INVENTORY");
             Console.WriteLine("=========================================\n");
@@ -704,17 +706,35 @@ namespace Grocycle
             else
             {
                 Console.WriteLine(
-                    "Item\t\tQty\tExpiry");
+                    "Item\t\tQty\tPrice\t\tTotal");
 
                 Console.WriteLine(
-                    "-----------------------------------------");
+                    "-------------------------------------------------------");
+
+
 
                 foreach (string item in items)
                 {
                     string[] data = item.Split('|');
 
-                    Console.WriteLine($"{data[0]}\t\t{data[1]}\t{data[2]}");
+                    string itemName = data[0];
+
+                    int quantity =
+                        int.Parse(data[1]);
+
+                    double price =
+                        double.Parse(data[2]);
+
+                    double total =
+                        quantity * price;
+
+                    grandTotal += total;
+
+
+                    Console.WriteLine($"{data[0]}\t\t{data[1]}\t${data[2]}\t\t${total}\n");
                 }
+
+                Console.WriteLine($"Inventory Value: ${grandTotal}");
             }
 
         }
@@ -902,45 +922,10 @@ namespace Grocycle
         {
         }
 
-        static void ExpiryMenu()
-        {
-        }
-
-        static void CheckExpiringItems()
-        {
-        }
-
-        static void SuggestItemUsage()
-        {
-        }
-
-
-
-        static void WasteMenu()
-        {
-        }
-
-        static void RecordWaste()
-        {
-        }
 
         static void SuggestDisposal()
         {
         }
-
-
-        static void AddPoints(int points)
-        {
-        }
-
-        static void DeductPoints(int points)
-        {
-        }
-
-        static void ViewPoints()
-        {
-        }
-
 
 
         static void BudgetAnalysis()
@@ -972,6 +957,11 @@ namespace Grocycle
 
         static void LoadUserData()
         {
+        }
+
+        static void HouseHoldRestriction()
+        {
+
         }
     }
 }
