@@ -193,11 +193,7 @@ namespace Grocycle
                 File.Create(
                     Path.Combine(userFolder, "Inventory.txt"))
                     .Close();
-
-                File.Create(
-                    Path.Combine(userFolder, "Purchases.txt"))
-                    .Close();
-
+ 
                 File.Create(
                     Path.Combine(userFolder, "Waste.txt"))
                     .Close();
@@ -409,6 +405,9 @@ namespace Grocycle
             string[] profile =
                 File.ReadAllLines(profilePath);
 
+            string savedPassword = "";
+
+
             Console.WriteLine("=================================");
             Console.WriteLine("      ACCOUNT INFORMATION");
             Console.WriteLine("=================================\n");
@@ -417,6 +416,13 @@ namespace Grocycle
             {
                 Console.WriteLine(
                     line.Replace("|", ": "));
+
+                string[] data = line.Split('|');
+
+                if (data[0] == "Password")
+                {
+                    savedPassword = data[1];
+                }
             }
 
             Console.WriteLine();
@@ -428,42 +434,68 @@ namespace Grocycle
             if (choice != "Y")
                 return;
 
-            
-
-
-            Console.WriteLine("\n\n=================================");
+            while (true)
+            {
+                Console.Clear() ;
+                Console.WriteLine("\n\n=================================");
             Console.WriteLine(" UPDATE HOUSEHOLD INFORMATION");
             Console.WriteLine("=================================\n");
 
-            Console.Write("Monthly Grocery Budget: $");
-            string budget =
-                Console.ReadLine();
+            
+                Console.Write("Gmail: ");
+                string gmail =
+                    Console.ReadLine();
 
-            Console.Write("Supermarket Visits Per Month: ");
-            string visits =
-                Console.ReadLine();
+                if (string.IsNullOrEmpty(gmail))
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter email account.\n");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
 
-            Console.Write("Number of Family Members: ");
-            string members =
-                Console.ReadLine();
+                if (!gmail.EndsWith("@gmail.com"))
+                {
+                    Console.WriteLine("Invalid Gmail address!");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
 
-            string[] newProfile =
-            {
+                Console.Write("Monthly Grocery Budget: $");
+                string budget =
+                    Console.ReadLine();
+
+                Console.Write("Supermarket Visits Per Month: ");
+                string visits =
+                    Console.ReadLine();
+
+                Console.Write("Number of Family Members: ");
+                string members =
+                    Console.ReadLine();
+
+                string[] newProfile =
+                {
                 $"Username|{CurrentUser}",
+                $"Password|{savedPassword}",
+                $"Gmail|{gmail}",
                 $"Budget|{budget}",
                 $"Visits|{visits}",
                 $"Members|{members}"
     };
 
-            File.WriteAllLines(
-                profilePath,
-                newProfile);
+                File.WriteAllLines(
+                    profilePath,
+                    newProfile);
 
-            Console.WriteLine();
-            Console.WriteLine(
-                "Household information updated successfully!");
+                Console.WriteLine();
+                Console.WriteLine(
+                    "Household information updated successfully!");
 
-            Pause();
+                Pause();
+                break;  
+            }
         }
 
         static void Pause()
@@ -531,7 +563,7 @@ namespace Grocycle
 
                 if (!File.Exists(profilePath))
                 {
-                    Console.WriteLine("Account not found please check username.");
+                    Console.WriteLine("\nAccount not found please check username.");
                     Pause();
                     Console.Clear();
                     continue;
@@ -544,7 +576,7 @@ namespace Grocycle
                 if (!gmail.EndsWith("@gmail.com"))
                 {
                     Console.WriteLine();
-                    Console.WriteLine("Invalid Gmail address!");
+                    Console.WriteLine("\nInvalid Gmail address!");
                     Pause();
                     Console.Clear();
                     continue;
@@ -568,18 +600,18 @@ namespace Grocycle
                 if (gmail.ToLower() != savedGmail.ToLower())
                 {
                     Console.WriteLine();
-                    Console.WriteLine("Gmail does not match account.");
+                    Console.WriteLine("\nGmail does not match account.");
                     Pause();
                     Console.Clear();
                     continue;
                 }
 
-                Console.Write("Confirm Gmail account(Y/N): ");
+                Console.Write("\nConfirm Gmail account(Y/N): ");
                 string confirmation = Console.ReadLine().ToLower();
 
                 if (confirmation != "y")
                 {
-                    Console.WriteLine("Verification cancelled.");
+                    Console.WriteLine("\nVerification cancelled.");
                     Pause();
                     Console.Clear();
                     continue;
@@ -588,14 +620,15 @@ namespace Grocycle
                 Random rnd = new Random();
                 int numcode = rnd.Next(1000,9999);
 
-                Console.WriteLine($"An OTP has been sent to {gmail}");
-                Console.WriteLine($"Hello {username}, your OTP is {numcode}");
+                Console.WriteLine($"\nAn OTP has been sent to {gmail}");
+                Console.ReadKey();
+                Console.WriteLine($"\nHello {username}, your OTP is {numcode}");
 
                 Pause();
                 Console.Clear();
 
                 Console.WriteLine("=========================================");
-                Console.WriteLine("         PLEASE ENTER VERIFICATION CODE");
+                Console.WriteLine("    PLEASE ENTER VERIFICATION CODE");
                 Console.WriteLine("=========================================\n");
 
                 Console.Write("Enter code: ");
@@ -604,10 +637,8 @@ namespace Grocycle
 
                 if (code != numcode.ToString())
                 {
-                    Console.WriteLine("Incorrect verification code!");
-                    Pause();
-                    Console.Clear();
-                    continue;
+                    Console.WriteLine("Incorrect verification code. Would you like to try again?:");
+                     
                 }
 
                 Console.Write("Enter New Password: ");
@@ -731,7 +762,7 @@ namespace Grocycle
                     grandTotal += total;
 
 
-                    Console.WriteLine($"{data[0]}\t\t{data[1]}\t${data[2]}\t\t${total}\n");
+                    Console.WriteLine($"{itemName}\t\t{price}\t${quantity}\t\t${total}\n");
                 }
 
                 Console.WriteLine($"Inventory Value: ${grandTotal}");
