@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.Security.Principal;
-using System.Globalization;
+using System.ComponentModel;
 using System.Dynamic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Security.Principal;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
 
 namespace Grocycle
 {
@@ -81,29 +84,34 @@ namespace Grocycle
 
         static void SignUpConfirmation()
         {
-            while (true)
-            {
+            
                 Console.Clear();
                 Console.WriteLine("Already have an account?(Y/N): ");
                 string answer = Console.ReadLine().ToLower();
 
                 if (answer == "y")
                 {
-                    Console.Write("\nLogin Here\n");
+                    Console.WriteLine("\nLogin Here");
                     Pause();
                     Console.Clear();
+
                     Login();
+                    return;
                 }
 
                 else if (answer == "n")
                 {
-                    Console.Write("\nCreate an account\n");
+                    Console.WriteLine("\nCreate an account");
                     Pause();
                     Console.Clear();
-                    SignUp();
-                }
-            }
 
+                    SignUp();
+                    return;
+                }
+
+                Console.WriteLine("\nInvalid choice.");
+                Pause();
+            
         }
 
         static void SignUp()
@@ -116,7 +124,17 @@ namespace Grocycle
                 Console.WriteLine("=========================================\n");
 
                 Console.Write("Enter Email: ");
-                string gmail = Console.ReadLine().Trim();
+                string gmail = Console.ReadLine().Trim().ToLower();
+
+                if (!Regex.IsMatch(gmail, @"^[a-zA-Z][a-zA-Z0-9._]{2,}@gmail\.com$"))
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Invalid Gmail format.");
+                    Console.WriteLine("Example: juan123@gmail.com");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
 
                 if (string.IsNullOrEmpty(gmail))
                 {
@@ -177,7 +195,7 @@ namespace Grocycle
 
                 if (password != repassword)
                 {
-                    
+
                     Console.WriteLine("\nPasswords do not match.\n");
                     Pause();
                     Console.Clear();
@@ -200,31 +218,114 @@ namespace Grocycle
                 switch (consent)
                 {
                     case "1":
-                        Console.WriteLine("Returning to Main Menu...");
+                        Console.WriteLine("You must consent to create an account.");
                         Pause();
-                        Dashboard();
-                        break;
-                        
+                        Console.Clear();
+                        return;
 
-                    case "2": 
+
+                    case "2":
                         Pause();
                         Console.Clear();
                         break;
 
                     default:
                         Console.WriteLine("Invalid choice.");
-                        break;
+                        Pause();
+                        Console.Clear();
+                        continue;
 
                 }
 
-                Console.Write("\nMonthly Grocery Budget ($): ");
+                Console.Write("\nTarget Grocery Budget ($): ");
                 string budget = Console.ReadLine();
 
-                Console.Write("Supermarket Visits Per Month: ");
-                string visits = Console.ReadLine();
+                Console.Write("\nTarget Grocery Savings ($): ");
+                string savings = Console.ReadLine();
 
-                Console.Write("Number of Family Members: ");
-                string members = Console.ReadLine();
+                string visits = "";
+                string members = "";
+
+                while (true)
+                {
+                    Console.WriteLine("\nHow often do you go to the supermarket?\n");
+
+                    Console.WriteLine("[1] Every Week");
+                    Console.WriteLine("[2] Every 2 Weeks");
+                    Console.WriteLine("[3] Every 3 Weeks");
+                    Console.WriteLine("[4] Once a Month");
+
+                    Console.Write("\nChoice: ");
+
+                    string visitChoice = Console.ReadLine();
+
+                    switch (visitChoice)
+                    {
+                        case "1":
+                            visits = "Every Week";
+                            break;
+
+                        case "2":
+                            visits = "Every 2 Weeks";
+                            break;
+
+                        case "3":
+                            visits = "Every 3 Weeks";
+                            break;
+
+                        case "4":
+                            visits = "Once a Month";
+                            break;
+
+                        default:
+                            Console.WriteLine("\nInvalid choice.");
+                            Pause();
+                            continue;
+                    }
+
+                    break;
+                }
+            
+
+            while (true)
+                {
+                    Console.WriteLine("\nHow many family members are in your household?\n");
+
+                    Console.WriteLine("[1] 1 - 3 Family Members");
+                    Console.WriteLine("[2] 4 - 7 Family Members");
+                    Console.WriteLine("[3] 8 - 10 Family Members");
+                    Console.WriteLine("[4] More than 10 Family Members");
+
+                    Console.Write("\nChoice: ");
+
+                    string memberChoice = Console.ReadLine();
+
+                    switch (memberChoice)
+                    {
+                        case "1":
+                            members = "1-3";
+                            break;
+
+                        case "2":
+                            members = "4-7";
+                            break;
+
+                        case "3":
+                            members = "8-10";
+                            break;
+
+                        case "4":
+                            members = "10+";
+                            break;
+
+                        default:
+                            Console.WriteLine("\nInvalid choice.");
+                            Pause();
+                            continue;
+                    }
+
+                    break;
+                }
 
                 Directory.CreateDirectory(userFolder);
 
@@ -236,6 +337,7 @@ namespace Grocycle
                     $"Password|{password}",
                     $"Gmail|{gmail}",
                     $"Budget|{budget}",
+                    $"Savings|{savings}",
                     $"Visits|{visits}",
                     $"Members|{members}"
                     });
@@ -251,7 +353,7 @@ namespace Grocycle
                 File.Create(
                     Path.Combine(userFolder, "Inventory.txt"))
                     .Close();
- 
+
                 File.Create(
                     Path.Combine(userFolder, "Waste.txt"))
                     .Close();
@@ -262,7 +364,8 @@ namespace Grocycle
 
                 Console.WriteLine("\nAccount Created Successfully!");
                 Pause();
-                break;
+                Console.Clear();
+                return;
             }
         }
 
@@ -338,7 +441,7 @@ namespace Grocycle
                     continue;
                 }
 
-                
+
 
                 CurrentUser = username;
                 UserFolder = userFolder;
@@ -418,7 +521,7 @@ namespace Grocycle
                 Console.WriteLine("[2] Grocery Planner");
                 Console.WriteLine("[3] Inventory Management");
                 Console.WriteLine("[4] Savings Tracker");
-                Console.WriteLine("[4] Log out");
+                Console.WriteLine("[5] Log out");
 
                 Console.Write("\nEnter Choice: ");
 
@@ -498,12 +601,12 @@ namespace Grocycle
 
             while (true)
             {
-                Console.Clear() ;
+                Console.Clear();
                 Console.WriteLine("\n\n=================================");
-            Console.WriteLine(" UPDATE HOUSEHOLD INFORMATION");
-            Console.WriteLine("=================================\n");
+                Console.WriteLine(" UPDATE HOUSEHOLD INFORMATION");
+                Console.WriteLine("=================================\n");
 
-            
+
                 Console.Write("Gmail: ");
                 string gmail =
                     Console.ReadLine();
@@ -556,7 +659,7 @@ namespace Grocycle
                     "Household information updated successfully!");
 
                 Pause();
-                break;  
+                break;
             }
         }
 
@@ -577,6 +680,12 @@ namespace Grocycle
                 Console.WriteLine("=========================================");
 
                 ViewInventory();
+
+
+                Console.WriteLine("\n[1] Add Item");
+                Console.WriteLine("[2] Update Quantity");
+                Console.WriteLine("[3] Remove Item");
+                Console.WriteLine("[4] Back");
 
 
                 Console.WriteLine("\n[1] Add Item");
@@ -680,7 +789,7 @@ namespace Grocycle
                 }
 
                 Random rnd = new Random();
-                int numcode = rnd.Next(1000,9999);
+                int numcode = rnd.Next(1000, 9999);
 
                 Console.WriteLine($"\nAn OTP has been sent to {gmail}");
                 Console.ReadKey();
@@ -700,7 +809,7 @@ namespace Grocycle
                 if (code != numcode.ToString())
                 {
                     Console.WriteLine("Incorrect verification code. Would you like to try again?:");
-                     
+
                 }
 
                 Console.Write("Enter New Password: ");
@@ -719,7 +828,7 @@ namespace Grocycle
 
                 }
 
-                
+
 
                 for (int i = 0; i < profile.Length; i++)
                 {
@@ -765,13 +874,13 @@ namespace Grocycle
 
 
 
-                Console.WriteLine("\nItem Added!");
+            Console.WriteLine("\nItem Added!");
 
-                File.AppendAllText(
-                inventoryPath,
-                $"{name}|{price}|{quantity}\n");
-            
-            
+            File.AppendAllText(
+            inventoryPath,
+            $"{name}|{price}|{quantity}\n");
+
+
 
             Pause();
         }
@@ -803,6 +912,8 @@ namespace Grocycle
 
                 Console.WriteLine(
                     "-------------------------------------------------------");
+
+
 
 
 
