@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Security.Principal;
 using System.Globalization;
+using System.Dynamic;
 
 namespace Grocycle
 {
@@ -63,7 +64,7 @@ namespace Grocycle
                         break;
 
                     case "2":
-                        SignUp();
+                        SignUpConfirmation();
                         break;
 
                     case "3":
@@ -76,6 +77,33 @@ namespace Grocycle
                         break;
                 }
             }
+        }
+
+        static void SignUpConfirmation()
+        {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("Already have an account?(Y/N): ");
+                string answer = Console.ReadLine().ToLower();
+
+                if (answer == "y")
+                {
+                    Console.Write("\nLogin Here\n");
+                    Pause();
+                    Console.Clear();
+                    Login();
+                }
+
+                else if (answer == "n")
+                {
+                    Console.Write("\nCreate an account\n");
+                    Pause();
+                    Console.Clear();
+                    SignUp();
+                }
+            }
+
         }
 
         static void SignUp()
@@ -157,7 +185,37 @@ namespace Grocycle
 
                 }
 
-                
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\n\nWELCOME!");
+                Console.ResetColor();
+
+                Console.WriteLine("Before we set up your account, we would like to ask a few brief questions to customize your experience. Please take a moment to review our Terms and Conditions below.\n\n");
+
+                Console.WriteLine("I consent to the collection, use, storage, sharing, and processing of my personal data by the Social Security System (SSS) in accordance with the Data Privacy Act (DPA) and its Implementing Rules and Regulations (IRR). I affirm my rights as a data subject, including the rights to be informed, object, access, correct or dispute inaccuracies, suspend or withdraw my data, data portability, and to be indemnified for damages. I also understand my right to file a complaint with the National Privacy Commission (NPC) for any violation of my data privacy rights.\n\n");
+                Console.WriteLine("[1]I do not consent.\n[2] I consent.");
+                Console.WriteLine("---------------------------");
+                string consent = Console.ReadLine();
+
+                switch (consent)
+                {
+                    case "1":
+                        Console.WriteLine("Returning to Main Menu...");
+                        Pause();
+                        Dashboard();
+                        break;
+                        
+
+                    case "2": 
+                        Pause();
+                        Console.Clear();
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid choice.");
+                        break;
+
+                }
 
                 Console.Write("\nMonthly Grocery Budget ($): ");
                 string budget = Console.ReadLine();
@@ -210,7 +268,6 @@ namespace Grocycle
 
         static void Login()
         {
-
             Console.Clear();
             while (true)
             {
@@ -358,8 +415,9 @@ namespace Grocycle
                 Console.WriteLine("\n=======================================================================================================================\n");
 
                 Console.WriteLine("[1] Account Information");
-                Console.WriteLine("[2] Inventory Management");
-                Console.WriteLine("[3] Grocery Planner");
+                Console.WriteLine("[2] Grocery Planner");
+                Console.WriteLine("[3] Inventory Management");
+                Console.WriteLine("[4] Savings Tracker");
                 Console.WriteLine("[4] Log out");
 
                 Console.Write("\nEnter Choice: ");
@@ -375,14 +433,18 @@ namespace Grocycle
                         break;
 
                     case "2":
-                        InventoryMenu();
-                        break;
-
-                    case "3":
                         GroceryPlanner();
                         break;
 
+                    case "3":
+                        InventoryMenu();
+                        break;
+
                     case "4":
+                        BudgetAnalysis();
+                        break;
+
+                    case "5":
                         CurrentUser = "";
                         UserFolder = "";
                         return;
