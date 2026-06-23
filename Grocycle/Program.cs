@@ -1,14 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Dynamic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.Principal;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 
 namespace Grocycle
@@ -17,10 +11,6 @@ namespace Grocycle
     {
         static string CurrentUser;
         static string UserFolder;
-        static Queue<string> ExpiringItems =
-            new Queue<string>();
-        static Stack<string> WasteHistory =
-            new Stack<string>();
 
         static void Main(string[] args)
         {
@@ -84,34 +74,34 @@ namespace Grocycle
 
         static void SignUpConfirmation()
         {
-            
-                Console.Clear();
-                Console.WriteLine("Already have an account?(Y/N): ");
-                string answer = Console.ReadLine().ToLower();
 
-                if (answer == "y")
-                {
-                    Console.WriteLine("\nLogin Here");
-                    Pause();
-                    Console.Clear();
+            Console.Clear();
+            Console.WriteLine("Already have an account?(Y/N): ");
+            string answer = Console.ReadLine().ToLower();
 
-                    Login();
-                    return;
-                }
-
-                else if (answer == "n")
-                {
-                    Console.WriteLine("\nCreate an account");
-                    Pause();
-                    Console.Clear();
-
-                    SignUp();
-                    return;
-                }
-
-                Console.WriteLine("\nInvalid choice.");
+            if (answer == "y")
+            {
+                Console.WriteLine("\nLogin Here");
                 Pause();
-            
+                Console.Clear();
+
+                Login();
+                return;
+            }
+
+            else if (answer == "n")
+            {
+                Console.WriteLine("\nCreate an account");
+                Pause();
+                Console.Clear();
+
+                SignUp();
+                return;
+            }
+
+            Console.WriteLine("\nInvalid choice.");
+            Pause();
+
         }
 
         static void SignUp()
@@ -285,9 +275,9 @@ namespace Grocycle
 
                     break;
                 }
-            
 
-            while (true)
+
+                while (true)
                 {
                     Console.WriteLine("\nHow many family members are in your household?\n");
 
@@ -342,24 +332,12 @@ namespace Grocycle
                     $"Members|{members}"
                     });
 
-                File.WriteAllLines(
-                    Path.Combine(userFolder, "Points.txt"),
-                    new string[]
-                    {
-                    "Points|0",
-                    "Rank|Eco Beginner"
-                    });
-
                 File.Create(
                     Path.Combine(userFolder, "Inventory.txt"))
                     .Close();
 
                 File.Create(
-                    Path.Combine(userFolder, "Waste.txt"))
-                    .Close();
-
-                File.Create(
-                    Path.Combine(userFolder, "Reports.txt"))
+                    Path.Combine(userFolder, "Planner.txt"))
                     .Close();
 
                 Console.WriteLine("\nAccount Created Successfully!");
@@ -460,15 +438,17 @@ namespace Grocycle
             {
                 Console.Clear();
 
+                double budget = 0;
+                double savings = 0;
+
+                string members = "";
+                string visits = "";
+
                 string profilePath =
-                    Path.Combine(UserFolder, "Profile.txt");
+                Path.Combine(UserFolder, "Profile.txt");
 
                 string[] profile =
                     File.ReadAllLines(profilePath);
-
-                string budget = "";
-                string visits = "";
-                string members = "";
 
                 foreach (string line in profile)
                 {
@@ -477,15 +457,19 @@ namespace Grocycle
                     switch (data[0])
                     {
                         case "Budget":
-                            budget = data[1];
+                            budget = double.Parse(data[1]);
                             break;
 
-                        case "Visits":
-                            visits = data[1];
+                        case "Savings":
+                            savings = double.Parse(data[1]);
                             break;
 
                         case "Members":
                             members = data[1];
+                            break;
+
+                        case "Visits":
+                            visits = data[1];
                             break;
                     }
                 }
@@ -511,9 +495,10 @@ namespace Grocycle
                 Console.WriteLine($"Welcome, {CurrentUser}");
                 Console.WriteLine();
 
-                Console.WriteLine($"Monthly Budget : ${budget}");
-                Console.WriteLine($"Store Visits   : {visits}");
-                Console.WriteLine($"Family Members : {members}");
+                Console.WriteLine($"Monthly Budget: ${budget}");
+                Console.WriteLine($"Savings: ${savings}");
+                Console.WriteLine($"Store Visits: {visits}");
+                Console.WriteLine($"Family Members: {members}");
 
                 Console.WriteLine("\n=======================================================================================================================\n");
 
@@ -536,15 +521,15 @@ namespace Grocycle
                         break;
 
                     case "2":
-                        GroceryPlanner();
+                        PlannerConfirmation();
                         break;
 
                     case "3":
-                        InventoryMenu();
+                        InventoryMenu(members, visits, budget, savings);
                         break;
 
                     case "4":
-                        BudgetAnalysis();
+                        RecordSavings();
                         break;
 
                     case "5":
@@ -669,7 +654,7 @@ namespace Grocycle
             Console.ReadKey();
         }
 
-        static void InventoryMenu()
+        static void InventoryMenu(string members, string visits, double budget, double savings)
         {
             while (true)
             {
@@ -679,14 +664,8 @@ namespace Grocycle
                 Console.WriteLine("         INVENTORY MANAGEMENT");
                 Console.WriteLine("=========================================");
 
+                GroceryPlanner(members, visits, budget, savings);
                 ViewInventory();
-
-
-                Console.WriteLine("\n[1] Add Item");
-                Console.WriteLine("[2] Update Quantity");
-                Console.WriteLine("[3] Remove Item");
-                Console.WriteLine("[4] Back");
-
 
                 Console.WriteLine("\n[1] Add Item");
                 Console.WriteLine("[2] Update Quantity");
@@ -913,10 +892,6 @@ namespace Grocycle
                 Console.WriteLine(
                     "-------------------------------------------------------");
 
-
-
-
-
                 foreach (string item in items)
                 {
                     string[] data = item.Split('|');
@@ -940,6 +915,7 @@ namespace Grocycle
 
                 Console.WriteLine($"Inventory Value: ${grandTotal}");
             }
+
 
         }
 
@@ -1049,123 +1025,188 @@ namespace Grocycle
         }
 
 
-        static void GroceryPlanner()
+        static void GroceryPlanner(string members, string visits, double budget, double savings)
         {
+            List<string> planner = new List<string>();
+
+            double total = 0;
+
+            if (members == "1-3")
+            {
+                planner.Add("Rice|1|300");
+                planner.Add("Eggs|12|270");
+                planner.Add("Bread|2|60");
+
+                total += 300;
+                total += 270;
+                total += 120;
+            }
+
+            else if (members == "4-7")
+            {
+                planner.Add("Rice|2|300");
+                planner.Add("Eggs|24|270");
+                planner.Add("Bread|4|60");
+
+                total += 600;
+                total += 270;
+                total += 240;
+            }
+
+            else
+            {
+                planner.Add("Rice|3|300");
+                planner.Add("Eggs|36|270");
+                planner.Add("Bread|6|60");
+
+                total += 900;
+                total += 270;
+                total += 360;
+            }
+
+
+            if (budget >= 8000)
+            {
+                planner.Add("Chicken|5|200");
+                planner.Add("Milk|5|90");
+
+                total += 1000;
+                total += 450;
+            }
+
+            else if (budget >= 4000)
+            {
+                planner.Add("Chicken|3|200");
+                planner.Add("Vegetables|5|100");
+
+                total += 600;
+                total += 500;
+            }
+
+            else
+            {
+                planner.Add("Vegetables|5|100");
+                planner.Add("Fish|2|180");
+
+                total += 500;
+                total += 360;
+            }
+
             Console.Clear();
 
-            string inventoryPath =
-                Path.Combine(UserFolder, "Inventory.txt");
-
-            string[] items =
-                File.ReadAllLines(inventoryPath);
-
             Console.WriteLine("=========================================");
-            Console.WriteLine("            GROCERY PLANNER");
+            Console.WriteLine("          GROCYCLE PLANNER");
             Console.WriteLine("=========================================\n");
 
-            bool foundLowStock = false;
+            Console.WriteLine($"Family Size: {members}");
+            Console.WriteLine($"Budget: ${budget}");
+            Console.WriteLine($"Target Savings: ${savings}");
+            Console.WriteLine($"Shopping Frequency: {visits}");
 
-            foreach (string item in items)
+            Console.WriteLine("\nSuggested Grocery List");
+            Console.WriteLine("----------------------------------------");
+
+            foreach (string item in planner)
             {
                 string[] data = item.Split('|');
 
-                int quantity =
-                    Convert.ToInt32(data[1]);
-
-                if (quantity <= 2)
-                {
-                    foundLowStock = true;
-
-                    Console.WriteLine(
-                        $"Buy More: {data[0]}");
-                }
+                Console.WriteLine(
+                    $"{data[0],-15} Qty:{data[1],-5} Price: ${data[2]}");
             }
 
-            if (!foundLowStock)
+            Console.WriteLine("----------------------------------------");
+
+            Console.WriteLine($"Total Cost: ${total}");
+
+            double spendingLimit = budget - savings;
+
+            Console.WriteLine($"Recommended Spending Limit: ${spendingLimit}");
+
+            if (total <= spendingLimit)
+            {
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\nWithin Budget!\n");
+                Console.ResetColor();
+                Console.WriteLine($"Remaining: ${spendingLimit - total}");
+            }
+            else
             {
                 Console.WriteLine(
-                    "No low-stock items detected.");
+                    $"Overspent: ${total - spendingLimit}");
             }
 
-            Console.WriteLine();
-            Console.WriteLine(
-                "Suggested purchases are based on low inventory.");
+            Console.WriteLine("Would you like ");
 
             Pause();
         }
 
-        static void RecordPurchase()
-        {
-            Console.Clear();
-
-            Console.Write("Item Name: ");
-            string item = Console.ReadLine();
-
-            Console.Write("Cost: ");
-            string cost = Console.ReadLine();
-
-            string purchasePath =
-                Path.Combine(UserFolder,
-                "Purchases.txt");
-
-            File.AppendAllText(
-                purchasePath,
-                $"{item}|{cost}\n");
-
-            Console.WriteLine(
-                "\nPurchase Recorded!");
-
-            Pause();
-        }
 
         static void GenerateShoppingList()
         {
         }
 
-        static void AnalyzeConsumption()
+        static void PlannerConfirmation()
         {
+            Console.Clear();
+
+            double budget = 0;
+            double savings = 0;
+
+            string members = "";
+            string visits = "";
+
+            string profilePath =
+            Path.Combine(UserFolder, "Profile.txt");
+
+            string[] profile =
+                File.ReadAllLines(profilePath);
+
+            foreach (string line in profile)
+            {
+                string[] data = line.Split('|');
+
+                switch (data[0])
+                {
+                    case "Budget":
+                        budget = double.Parse(data[1]);
+                        break;
+
+                    case "Savings":
+                        savings = double.Parse(data[1]);
+                        break;
+
+                    case "Members":
+                        members = data[1];
+                        break;
+
+                    case "Visits":
+                        visits = data[1];
+                        break;
+                }
+            }
+
+            Console.Write("Want us to make your planner?(Y/N): ");
+            string choice = Console.ReadLine().ToUpper();
+
+            if (choice == "N")
+            {
+                InventoryMenu(members, visits, budget, savings);
+            }
+
+            else if (choice == "Y")
+            {
+                GroceryPlanner(members, visits, budget, savings);
+            }
+
         }
 
 
-        static void SuggestDisposal()
-        {
-        }
-
-
-        static void BudgetAnalysis()
-        {
-        }
-
-        static void CheckOverspending()
-        {
-        }
-
-        static void DetectOverconsumption()
-        {
-        }
-
-
-
-        static void GenerateMonthlyReport()
-        {
-        }
-
-        static void ComparePreviousMonth()
-        {
-        }
-
-
-        static void SaveUserData()
-        {
-        }
-
-        static void LoadUserData()
-        {
-        }
-
-        static void HouseHoldRestriction()
+        static void RecordSavings()
         {
 
         }
+
+
     }
 }
