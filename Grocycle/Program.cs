@@ -29,17 +29,19 @@ namespace Grocycle
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine(@"
 
-                              ██████╗ ██████╗  ██████╗  ██████╗██╗   ██╗ ██████╗██╗     ███████╗
-                             ██╔════╝ ██╔══██╗██╔═══██╗██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝
-                             ██║  ███╗██████╔╝██║   ██║██║      ╚████╔╝ ██║     ██║     █████╗
-                             ██║   ██║██╔══██╗██║   ██║██║       ╚██╔╝  ██║     ██║     ██╔══╝
-                             ╚██████╔╝██║  ██║╚██████╔╝╚██████╗   ██║   ╚██████╗███████╗███████╗
-                              ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝
+                    ██████╗ ██████╗  ██████╗  ██████╗ █████╗ ██████╗
+                   ██╔════╝ ██╔══██╗██╔═══██╗██╔════╝██╔══██╗██╔══██╗
+                   ██║  ███╗██████╔╝██║   ██║██║     ███████║██████╔╝
+                   ██║   ██║██╔══██╗██║   ██║██║     ██╔══██║██╔═══╝
+                   ╚██████╔╝██║  ██║╚██████╔╝╚██████╗██║  ██║██║
+                    ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝
 
-                                                 SMART GROCERY PLANNER 
-                                      SDG 12: Responsible Consumption & Production
+                                      G R O C A P
+                        Grocery Consumption Analysis Planner
 
-                                    ");
+                           SDG 12: Responsible Consumption & Production
+
+");
                 Console.ResetColor();
                 Console.WriteLine("=======================================================================================================================\n");
 
@@ -76,8 +78,32 @@ namespace Grocycle
         {
 
             Console.Clear();
-            Console.WriteLine("Already have an account?(Y/N): ");
+
+            Console.WriteLine("=======================================================================================================================");
+            Console.ForegroundColor = ConsoleColor.Green;
+
+            Console.WriteLine(@"
+
+                    ██████╗ ██████╗  ██████╗  ██████╗ █████╗ ██████╗
+                   ██╔════╝ ██╔══██╗██╔═══██╗██╔════╝██╔══██╗██╔══██╗
+                   ██║  ███╗██████╔╝██║   ██║██║     ███████║██████╔╝
+                   ██║   ██║██╔══██╗██║   ██║██║     ██╔══██║██╔═══╝
+                   ╚██████╔╝██║  ██║╚██████╔╝╚██████╗██║  ██║██║
+                    ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝
+
+                                      G R O C A P
+                        Grocery Consumption Analysis Planner
+
+                           SDG 12: Responsible Consumption & Production
+
+");
+
+            Console.ResetColor();
+            Console.WriteLine("=======================================================================================================================\n");
+            Console.Write("Already have an account?(Y/N): ");
             string answer = Console.ReadLine().ToLower();
+
+            Console.WriteLine("\n=======================================================================================================================");
 
             if (answer == "y")
             {
@@ -109,9 +135,30 @@ namespace Grocycle
             Console.Clear();
             while (true)
             {
-                Console.WriteLine("=========================================");
+
+                Console.WriteLine("=======================================================================================================================");
+                Console.ForegroundColor = ConsoleColor.Green;
+
+                Console.WriteLine(@"
+
+                    ██████╗ ██████╗  ██████╗  ██████╗ █████╗ ██████╗
+                   ██╔════╝ ██╔══██╗██╔═══██╗██╔════╝██╔══██╗██╔══██╗
+                   ██║  ███╗██████╔╝██║   ██║██║     ███████║██████╔╝
+                   ██║   ██║██╔══██╗██║   ██║██║     ██╔══██║██╔═══╝
+                   ╚██████╔╝██║  ██║╚██████╔╝╚██████╗██║  ██║██║
+                    ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝
+
+                                      G R O C A P
+                        Grocery Consumption Analysis Planner
+
+                           SDG 12: Responsible Consumption & Production
+
+");
+
+                Console.ResetColor();
+                Console.WriteLine("=======================================================================================================================\n");
                 Console.WriteLine("                SIGN UP");
-                Console.WriteLine("=========================================\n");
+                Console.WriteLine("=======================================================================================================================\n");
 
                 Console.Write("Enter Email: ");
                 string gmail = Console.ReadLine().Trim().ToLower();
@@ -319,26 +366,22 @@ namespace Grocycle
 
                 Directory.CreateDirectory(userFolder);
 
-                File.WriteAllLines(
-                    Path.Combine(userFolder, "Profile.txt"),
-                    new string[]
+                File.WriteAllLines(Path.Combine(userFolder, "Profile.txt"),new string[]
                     {
                     $"Username|{username}",
                     $"Password|{password}",
-                    $"Gmail|{gmail}",
+                    $"Gmail|{gmail}",   
                     $"Budget|{budget}",
                     $"Savings|{savings}",
                     $"Visits|{visits}",
                     $"Members|{members}"
                     });
 
-                File.Create(
-                    Path.Combine(userFolder, "Inventory.txt"))
-                    .Close();
+                File.Create(Path.Combine(userFolder, "Inventory.txt")).Close();
 
-                File.Create(
-                    Path.Combine(userFolder, "Planner.txt"))
-                    .Close();
+
+                File.Create(Path.Combine(userFolder, "SavingsHistory.txt")).Close();
+
 
                 Console.WriteLine("\nAccount Created Successfully!");
                 Pause();
@@ -352,7 +395,28 @@ namespace Grocycle
             Console.Clear();
             while (true)
             {
-                Console.WriteLine("=========================================");
+
+                Console.WriteLine("=======================================================================================================================");
+                Console.ForegroundColor = ConsoleColor.Green;
+
+                Console.WriteLine(@"
+
+                    ██████╗ ██████╗  ██████╗  ██████╗ █████╗ ██████╗
+                   ██╔════╝ ██╔══██╗██╔═══██╗██╔════╝██╔══██╗██╔══██╗
+                   ██║  ███╗██████╔╝██║   ██║██║     ███████║██████╔╝
+                   ██║   ██║██╔══██╗██║   ██║██║     ██╔══██║██╔═══╝
+                   ╚██████╔╝██║  ██║╚██████╔╝╚██████╗██║  ██║██║
+                    ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝
+
+                                      G R O C A P
+                        Grocery Consumption Analysis Planner
+
+                           SDG 12: Responsible Consumption & Production
+
+");
+
+                Console.ResetColor();
+                Console.WriteLine("=======================================================================================================================\n");
                 Console.WriteLine("                 LOGIN");
                 Console.WriteLine("=========================================\n");
 
@@ -476,19 +540,23 @@ namespace Grocycle
 
                 Console.WriteLine("=======================================================================================================================");
                 Console.ForegroundColor = ConsoleColor.Green;
+
                 Console.WriteLine(@"
 
-                              ██████╗ ██████╗  ██████╗  ██████╗██╗   ██╗ ██████╗██╗     ███████╗
-                             ██╔════╝ ██╔══██╗██╔═══██╗██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝
-                             ██║  ███╗██████╔╝██║   ██║██║      ╚████╔╝ ██║     ██║     █████╗
-                             ██║   ██║██╔══██╗██║   ██║██║       ╚██╔╝  ██║     ██║     ██╔══╝
-                             ╚██████╔╝██║  ██║╚██████╔╝╚██████╗   ██║   ╚██████╗███████╗███████╗
-                              ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝
+                    ██████╗ ██████╗  ██████╗  ██████╗ █████╗ ██████╗
+                   ██╔════╝ ██╔══██╗██╔═══██╗██╔════╝██╔══██╗██╔══██╗
+                   ██║  ███╗██████╔╝██║   ██║██║     ███████║██████╔╝
+                   ██║   ██║██╔══██╗██║   ██║██║     ██╔══██║██╔═══╝
+                   ╚██████╔╝██║  ██║╚██████╔╝╚██████╗██║  ██║██║
+                    ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝
 
-                                                 SMART GROCERY PLANNER 
-                                      SDG 12: Responsible Consumption & Production
+                                      G R O C A P
+                        Grocery Consumption Analysis Planner
 
-                                    ");
+                           SDG 12: Responsible Consumption & Production
+
+");
+
                 Console.ResetColor();
                 Console.WriteLine("=======================================================================================================================\n");
 
@@ -660,11 +728,30 @@ namespace Grocycle
             {
                 Console.Clear();
 
-                Console.WriteLine("=========================================");
-                Console.WriteLine("         INVENTORY MANAGEMENT");
-                Console.WriteLine("=========================================");
 
-                GroceryPlanner(members, visits, budget, savings);
+                Console.WriteLine("=======================================================================================================================");
+                Console.ForegroundColor = ConsoleColor.Green;
+
+                Console.WriteLine(@"
+
+                    ██████╗ ██████╗  ██████╗  ██████╗ █████╗ ██████╗
+                   ██╔════╝ ██╔══██╗██╔═══██╗██╔════╝██╔══██╗██╔══██╗
+                   ██║  ███╗██████╔╝██║   ██║██║     ███████║██████╔╝
+                   ██║   ██║██╔══██╗██║   ██║██║     ██╔══██║██╔═══╝
+                   ╚██████╔╝██║  ██║╚██████╔╝╚██████╗██║  ██║██║
+                    ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝
+
+                                      G R O C A P
+                        Grocery Consumption Analysis Planner
+
+                           SDG 12: Responsible Consumption & Production");
+
+                Console.ResetColor();
+                Console.WriteLine("=======================================================================================================================\n");
+                Console.WriteLine("         INVENTORY MANAGEMENT");
+                Console.WriteLine("=======================================================================================================================\n");
+
+                
                 ViewInventory();
 
                 Console.WriteLine("\n[1] Add Item");
@@ -876,10 +963,6 @@ namespace Grocycle
 
             double grandTotal = 0;
 
-            Console.WriteLine("=========================================");
-            Console.WriteLine("               INVENTORY");
-            Console.WriteLine("=========================================\n");
-
             if (items.Length == 0)
             {
                 Console.WriteLine("Inventory Empty.");
@@ -909,11 +992,14 @@ namespace Grocycle
 
                     grandTotal += total;
 
-
-                    Console.WriteLine($"{itemName}\t\t{price}\t${quantity}\t\t${total}\n");
+                    Console.WriteLine(
+                        $"{itemName,-15} {quantity,-8} ${price,-8} ${total}");
                 }
 
-                Console.WriteLine($"Inventory Value: ${grandTotal}");
+                Console.WriteLine("\n-------------------------------------------");
+
+                Console.WriteLine(
+                $"Total Grocery Cost: ${grandTotal}");
             }
 
 
@@ -1027,6 +1113,9 @@ namespace Grocycle
 
         static void GroceryPlanner(string members, string visits, double budget, double savings)
         {
+
+            string inventoryPath = Path.Combine(UserFolder, "Inventory.txt");
+
             List<string> planner = new List<string>();
 
             double total = 0;
@@ -1092,6 +1181,8 @@ namespace Grocycle
                 total += 360;
             }
 
+            File.WriteAllLines(inventoryPath,planner);
+
             Console.Clear();
 
             Console.WriteLine("=========================================");
@@ -1141,11 +1232,6 @@ namespace Grocycle
             Pause();
         }
 
-
-        static void GenerateShoppingList()
-        {
-        }
-
         static void PlannerConfirmation()
         {
             Console.Clear();
@@ -1186,27 +1272,150 @@ namespace Grocycle
                 }
             }
 
-            Console.Write("Want us to make your planner?(Y/N): ");
+            Console.Clear();
+
+            Console.WriteLine("=======================================================================================================================");
+            Console.ForegroundColor = ConsoleColor.Green;
+
+            Console.WriteLine(@"
+
+                    ██████╗ ██████╗  ██████╗  ██████╗ █████╗ ██████╗
+                   ██╔════╝ ██╔══██╗██╔═══██╗██╔════╝██╔══██╗██╔══██╗
+                   ██║  ███╗██████╔╝██║   ██║██║     ███████║██████╔╝
+                   ██║   ██║██╔══██╗██║   ██║██║     ██╔══██║██╔═══╝
+                   ╚██████╔╝██║  ██║╚██████╔╝╚██████╗██║  ██║██║
+                    ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝
+
+                                      G R O C A P
+                        Grocery Consumption Analysis Planner
+
+                           SDG 12: Responsible Consumption & Production
+
+");
+
+            Console.ResetColor();
+            Console.WriteLine("=======================================================================================================================\n");
+
+            Console.Write("Want us to make your planner? (Y/N): ");
             string choice = Console.ReadLine().ToUpper();
+            Console.WriteLine("\n=======================================================================================================================");
 
-            if (choice == "N")
+            if (choice == "Y")
             {
-                InventoryMenu(members, visits, budget, savings);
+                GroceryPlanner( members,visits,budget,savings);
+
+                InventoryMenu(members,visits,budget,savings);
             }
 
-            else if (choice == "Y")
+            else
             {
-                GroceryPlanner(members, visits, budget, savings);
+                InventoryMenu(members,visits,budget,savings);
             }
 
         }
 
+            static void RecordSavings()
+            {
+                Console.Clear();
 
-        static void RecordSavings()
-        {
+                string inventoryPath =
+                    Path.Combine(UserFolder, "Inventory.txt");
 
+                string profilePath =
+                    Path.Combine(UserFolder, "Profile.txt");
+
+                string savingsPath =
+                    Path.Combine(UserFolder, "SavingsHistory.txt");
+
+                double budget = 0;
+
+                string[] profile =
+                    File.ReadAllLines(profilePath);
+
+                foreach (string line in profile)
+                {
+                    string[] data = line.Split('|');
+
+                    if (data[0] == "Budget")
+                    {
+                        budget =
+                            double.Parse(data[1]);
+                    }
+                }
+
+                double total = 0;
+
+                string[] items =
+                    File.ReadAllLines(inventoryPath);
+
+                foreach (string item in items)
+                {
+                    string[] data = item.Split('|');
+
+                    int quantity =
+                        int.Parse(data[1]);
+
+                    double price =
+                        double.Parse(data[2]);
+
+                    total += quantity * price;
+                }
+
+                double saved =
+                    budget - total;
+
+            Console.WriteLine("=======================================================================================================================");
+            Console.ForegroundColor = ConsoleColor.Green;
+
+            Console.WriteLine(@"
+
+                    ██████╗ ██████╗  ██████╗  ██████╗ █████╗ ██████╗
+                   ██╔════╝ ██╔══██╗██╔═══██╗██╔════╝██╔══██╗██╔══██╗
+                   ██║  ███╗██████╔╝██║   ██║██║     ███████║██████╔╝
+                   ██║   ██║██╔══██╗██║   ██║██║     ██╔══██║██╔═══╝
+                   ╚██████╔╝██║  ██║╚██████╔╝╚██████╗██║  ██║██║
+                    ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝
+
+                                      G R O C A P
+                        Grocery Consumption Analysis Planner
+
+                           SDG 12: Responsible Consumption & Production");
+
+            Console.ResetColor();
+            Console.WriteLine("=======================================================================================================================\n");
+            Console.WriteLine("         SAVINGS TRACKER");
+            Console.WriteLine("=======================================================================================================================");
+
+                Console.WriteLine($"Budget: ${budget}");
+                Console.WriteLine($"Current Grocery Total: ${total}");
+
+                if (saved >= 0)
+                {
+                    Console.ForegroundColor =
+                        ConsoleColor.Green;
+
+                    Console.WriteLine(
+                        $"Money Saved: ${saved}");
+
+                    Console.ResetColor();
+                }
+
+                else
+                {
+                    Console.ForegroundColor =
+                        ConsoleColor.Red;
+
+                    Console.WriteLine(
+                        $"Overspent: ${Math.Abs(saved)}");
+
+                    Console.ResetColor();
+                }
+
+                File.AppendAllText(
+                    savingsPath,
+                    $"{DateTime.Now:yyyy-MM-dd}|{saved}\n");
+
+                Pause();
+            }
         }
-
-
     }
-}
