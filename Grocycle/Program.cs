@@ -29,7 +29,15 @@ namespace ConsoleApp7
 
         static double RecommendedSpending = 0;
 
-        
+        static List<string> EssentialItems = new List<string> { "Rice","Bread","Eggs","Water","Milk","Vegetables","Fish","Chicken","Cooking Oil","Salt","Sugar"};
+        class InventoryItem
+        {
+            public string Name;
+            public double Price;
+            public int Quantity;
+        }
+
+
 
         static void Main(string[] args)
         {
@@ -81,13 +89,13 @@ namespace ConsoleApp7
 
         static void Dashboard()
         {
-            Header("DASHBOARD");
-
             while (true)
             {
                 LoadProfile();
 
                 CalculateInventory();
+
+                Header("DASHBOARD");
 
                 Console.WriteLine($"Welcome, {CurrentUser}!");
 
@@ -97,12 +105,11 @@ namespace ConsoleApp7
 
                 Console.WriteLine($"Visits          : {Visits}");
 
-                Console.WriteLine($"Budget          : ₱{Budget}");
+                Console.WriteLine($"Budget          : ${Budget}");
 
-                Console.WriteLine($"Savings Goal    : ₱{SavingsGoal}"); 
+                Console.WriteLine($"Savings Goal    : ${SavingsGoal}");
 
-                Console.WriteLine($"Current Savings : ₱{CurrentSavings}");
-
+                Console.WriteLine($"Current Savings : ${CurrentSavings}");
                 Console.WriteLine("--------------------------------------------------------------------------------------------------");
 
                 Console.WriteLine("[1] Account");
@@ -165,7 +172,7 @@ namespace ConsoleApp7
 
         static void PlannerConfirmation()
         {
-            
+
             Header("PLANNER");
 
             Console.Write("Would you like GROCAP to generate your grocery planner? (Y/N): ");
@@ -238,7 +245,7 @@ namespace ConsoleApp7
 
                     case "4":
 
-                       FinalizeGroceryPlan();
+                        FinalizeGroceryPlan();
                         break;
 
                     case "5":
@@ -246,7 +253,7 @@ namespace ConsoleApp7
 
                     default:
                         Console.WriteLine("Invalid choice.");
-                        break;
+                        continue;
                 }
             }
         }
@@ -259,7 +266,7 @@ namespace ConsoleApp7
 
             Header("SAVINGS TRACKER");
 
-            Console.WriteLine($"Current Savings: ₱{CurrentSavings}\n");
+            Console.WriteLine($"Current Savings: ${CurrentSavings}\n");
 
             Console.WriteLine("--------------------------------");
 
@@ -276,7 +283,7 @@ namespace ConsoleApp7
                 string[] data = line.Split('|');
                 string date = data[0];
                 double savings = double.Parse(data[1]);
-                Console.WriteLine($"{date}: ₱{savings}");
+                Console.WriteLine($"{date}: ${savings}");
             }
 
             Pause();
@@ -332,140 +339,147 @@ namespace ConsoleApp7
                 string members = "";
 
 
-
-                Console.Write("Gmail: ");
-                string newgmail = Console.ReadLine();
-
-                if (string.IsNullOrEmpty(gmail))
+                while (true)
                 {
-                    gmail = newgmail;
-                }
-
-                else if (!gmail.EndsWith("@gmail.com"))
-                {
-                    Console.WriteLine("Invalid Gmail address!");
-                    Pause();
                     Console.Clear();
-                    continue;
-                }
 
-                Console.Write("Monthly Grocery Budget: $");
-                string newbudget = Console.ReadLine();
-                double testBudget;
+                    Console.Write("Gmail: ");
+                    string newgmail = Console.ReadLine();
 
-                if (string.IsNullOrEmpty(budget))
-                {
-                    budget = newbudget;
-                }
+                    if (string.IsNullOrEmpty(gmail))
+                    {
+                        gmail = newgmail;
+                    }
 
-                else if (!double.TryParse(newbudget, out testBudget))
-                {
-                    Console.WriteLine("Please enter a valid budget.");
-                    Pause();
-                    continue;
-                }
+                    else if (!gmail.EndsWith("@gmail.com"))
+                    {
+                        Console.WriteLine("Invalid Gmail address!");
+                        Pause();
+                        Console.Clear();
+                        continue;
+                    }
 
-                Console.Write("Target Savings: $");
-                string newsavings = Console.ReadLine();
-                double testsavings;
+                    Console.Write("Monthly Grocery Budget: $");
+                    string newbudget = Console.ReadLine();
+                    double testBudget;
 
-                if (string.IsNullOrEmpty(budget))
-                {
-                    savings = newsavings;
-                }
+                    if (string.IsNullOrEmpty(budget))
+                    {
+                        budget = newbudget;
+                    }
 
-                else if (!double.TryParse(newsavings, out testsavings))
-                {
-                    Console.WriteLine("Please enter a valid budget.");
-                    Pause();
-                    continue;
-                }
+                    else if (!double.TryParse(newbudget, out testBudget))
+                    {
+                        Console.WriteLine("Please enter a valid budget.");
+                        Pause();
+                        continue;
+                    }
+
+                    Console.Write("Target Savings: $");
+                    string newsavings = Console.ReadLine();
+                    double testsavings;
+
+                    if (string.IsNullOrEmpty(savings))
+                    {
+                        savings = newsavings;
+                    }
+
+                    else if (!double.TryParse(newsavings, out testsavings))
+                    {
+                        Console.WriteLine("Please enter a valid budget.");
+                        Pause();
+                        continue;
+                    }
 
 
 
-                Console.WriteLine("\nHow often do you go to the supermarket?\n");
+                    Console.WriteLine("\nHow often do you go to the supermarket?\n");
 
-                Console.WriteLine("[1] Every Week");
-                Console.WriteLine("[2] Every 2 Weeks");
-                Console.WriteLine("[3] Every 3 Weeks");
-                Console.WriteLine("[4] Once a Month");
+                    Console.WriteLine("[1] Every Week");
+                    Console.WriteLine("[2] Every 2 Weeks");
+                    Console.WriteLine("[3] Every 3 Weeks");
+                    Console.WriteLine("[4] Once a Month");
 
-                Console.Write("\nChoice: ");
+                    Console.Write("\nChoice: ");
 
-                string newvisits = Console.ReadLine();
+                    string newvisits = Console.ReadLine();
 
-                if (string.IsNullOrEmpty(newvisits))
-                {
-                    visits = newvisits;
-                }
-
-                switch (newvisits)
-                {
-                    case "1":
+                    if (string.IsNullOrEmpty(newvisits))
+                    {
+                        visits = newvisits;
+                    }
+       
+                    else if(newvisits == "1")
+                    {
                         newvisits = "Every Week";
-                        break;
-
-                    case "2":
+                    }
+                    else if (newvisits == "2")
+                    {
                         newvisits = "Every 2 Weeks";
-                        break;
+                    }
 
-                    case "3":
+                    else if (newvisits == "3")
+                    {
                         newvisits = "Every 3 Weeks";
-                        break;
-
-                    case "4":
+                    }
+                    else if (newvisits == "4")
+                    {
                         newvisits = "Once a Month";
-                        break;
+                    }
 
-                    default:
+
+                    else if (newvisits != "1" && newvisits != "2" && newvisits != "3" && newvisits != "4")
+                    {
                         Console.WriteLine("\nInvalid choice.");
                         Pause();
                         continue;
-                }
+                    }
+                       
+                    Console.WriteLine("\nHow many family members are in your household?\n");
+
+                    Console.WriteLine("[1] 1 - 3 Family Members");
+                    Console.WriteLine("[2] 4 - 7 Family Members");
+                    Console.WriteLine("[3] 8 - 10 Family Members");
+                    Console.WriteLine("[4] More than 10 Family Members");
+
+                    Console.Write("\nChoice: ");
+
+                    string newmember = Console.ReadLine();
+
+                    if (string.IsNullOrEmpty(newmember))
+                    {
+                        members = newmember;
+                    }
+
+                    else if (newmember == "1")
+                    {
+                        members = "1 - 3 Family Members";
+                    }
+                    else if (newmember == "2")
+                    {
+                        members = "4 - 7 Family Members";
+                    }
+
+                    else if (newmember == "3")
+                    {
+                        members = "8 - 10 Family Members";
+                    }
+                    else if (newmember == "4")
+                    {
+                        members = "More than 10 Family Members";
+                    }
 
 
-
-
-                Console.WriteLine("\nHow many family members are in your household?\n");
-
-                Console.WriteLine("[1] 1 - 3 Family Members");
-                Console.WriteLine("[2] 4 - 7 Family Members");
-                Console.WriteLine("[3] 8 - 10 Family Members");
-                Console.WriteLine("[4] More than 10 Family Members");
-
-                Console.Write("\nChoice: ");
-
-                string newmember = Console.ReadLine();
-
-                if (string.IsNullOrEmpty(newmember))
-                {
-                    members = newmember;
-                }
-
-                switch (newmember)
-                {
-                    case "1":
-                        newmember = "1-3";
-                        break;
-
-                    case "2":
-                        newmember = "4-7";
-                        break;
-
-                    case "3":
-                        newmember = "8-10";
-                        break;
-
-                    case "4":
-                        newmember = "10+";
-                        break;
-
-                    default:
+                    else if (newmember != "1" && newmember != "2" && newmember != "3" && newmember != "4")
+                    {
                         Console.WriteLine("\nInvalid choice.");
                         Pause();
                         continue;
+                    }
+                    break;
                 }
                 SaveProfile(gmail, budget, savings, visits, members);
+                
             }
         }
 
@@ -479,7 +493,7 @@ namespace ConsoleApp7
             {
                 Header("LOGIN");
 
-                Console.Write("Username (B = Back): ");
+                Console.Write("Username: ");
                 string username = Console.ReadLine().Trim();
 
                 if (username.ToUpper() == "B")
@@ -496,6 +510,9 @@ namespace ConsoleApp7
 
                 Console.Write("Password: ");
                 string password = Console.ReadLine();
+
+                if (password.ToUpper() == "B")
+                    return;
 
                 string profilePath =
                     Path.Combine(userFolder, "Profile.txt");
@@ -514,7 +531,7 @@ namespace ConsoleApp7
                 }
 
                 if (password != savedPassword)
-                { 
+                {
 
                     Console.Write("\nForgot Password? (Y/N): ");
 
@@ -558,6 +575,9 @@ namespace ConsoleApp7
                 Console.Write("Enter Email: ");
                 string gmail = Console.ReadLine().Trim().ToLower();
 
+                if (gmail.ToUpper() == "B")
+                    return;
+
                 if (!Regex.IsMatch(gmail, @"^[a-zA-Z][a-zA-Z0-9._]{2,}@gmail\.com$"))
                 {
                     Console.WriteLine();
@@ -567,6 +587,7 @@ namespace ConsoleApp7
                     Console.Clear();
                     continue;
                 }
+
 
                 if (string.IsNullOrEmpty(gmail))
                 {
@@ -588,6 +609,12 @@ namespace ConsoleApp7
 
                 Console.Write("Create Username: ");
                 string username = Console.ReadLine().Trim().ToLower();
+
+                if (username.ToUpper() == "B")
+                {
+
+                    return;
+                }
 
                 if (string.IsNullOrEmpty(username))
                 {
@@ -612,11 +639,16 @@ namespace ConsoleApp7
                 Console.Write("Password: ");
                 string password = Console.ReadLine().Trim();
 
+                if (password.ToUpper() == "B")
+                {
+
+                    return;
+                }
+
                 if (string.IsNullOrEmpty(password))
                 {
                     Console.WriteLine();
-                    Console.WriteLine("Please enter a password.\n" +
-                        "");
+                    Console.WriteLine("Please enter a password.\n");
                     Pause();
                     Console.Clear();
                     continue;
@@ -624,6 +656,12 @@ namespace ConsoleApp7
 
                 Console.Write("Confirm Password: ");
                 string repassword = Console.ReadLine();
+
+                if (repassword.ToUpper() == "B")
+                {
+
+                    return;
+                }
 
                 if (password != repassword)
                 {
@@ -634,6 +672,10 @@ namespace ConsoleApp7
                     continue;
 
                 }
+
+                
+
+
 
                 Header("SIGN UP");
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -669,118 +711,136 @@ namespace ConsoleApp7
 
                 }
 
-                Console.Write("\nTarget Grocery Budget ($): ");
-                string budget = Console.ReadLine();
-
-                if (string.IsNullOrEmpty(budget))
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("Please enter an amount.\n ");
-                    Pause();
-                    Console.Clear();
-                    continue;
-                }
-
-                Console.Write("\nTarget Grocery Savings ($): ");
-                string savings = Console.ReadLine();
-
-                if (string.IsNullOrEmpty(savings))
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("Please enter an amount.\n");
-                    Pause();
-                    Console.Clear();
-                    continue;
-                }
-
-                string visits = "";
-                string members = "";
-
+               
                 while (true)
                 {
-                    Console.WriteLine("\nHow often do you go to the supermarket?\n");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Clear();
+                    Console.WriteLine("Please enter your target grocery budget and savings goal.\n"); 
+                    Console.Write("\nTarget Grocery Budget ($): ");
+                    string budget = Console.ReadLine();
+                    double testBudget;
 
-                    Console.WriteLine("[1] Every Week");
-                    Console.WriteLine("[2] Every 2 Weeks");
-                    Console.WriteLine("[3] Every 3 Weeks");
-                    Console.WriteLine("[4] Once a Month");
-
-                    Console.Write("\nChoice: ");
-
-                    string visitChoice = Console.ReadLine();
-
-                    switch (visitChoice)
+                    if (string.IsNullOrEmpty(budget))
                     {
-                        case "1":
-                            visits = "Every Week";
-                            break;
-
-                        case "2":
-                            visits = "Every 2 Weeks";
-                            break;
-
-                        case "3":
-                            visits = "Every 3 Weeks";
-                            break;
-
-                        case "4":
-                            visits = "Once a Month";
-                            break;
-
-                        default:
-                            Console.WriteLine("\nInvalid choice.");
-                            Pause();
-                            continue;
+                        Console.WriteLine();
+                        Console.WriteLine("Please enter an amount.\n ");
+                        Pause();
+                        Console.Clear();
+                        continue;
                     }
 
-                    break;
-                }
-
-
-                while (true)
-                {
-                    Console.WriteLine("\nHow many family members are in your household?\n");
-
-                    Console.WriteLine("[1] 1 - 3 Family Members");
-                    Console.WriteLine("[2] 4 - 7 Family Members");
-                    Console.WriteLine("[3] 8 - 10 Family Members");
-                    Console.WriteLine("[4] More than 10 Family Members");
-
-                    Console.Write("\nChoice: ");
-
-                    string memberChoice = Console.ReadLine();
-
-                    switch (memberChoice)
+                    else if (!double.TryParse(budget, out testBudget))
                     {
-                        case "1":
-                            members = "1-3";
-                            break;
-
-                        case "2":
-                            members = "4-7";
-                            break;
-
-                        case "3":
-                            members = "8-10";
-                            break;
-
-                        case "4":
-                            members = "10+";
-                            break;
-
-                        default:
-                            Console.WriteLine("\nInvalid choice.");
-                            Pause();
-                            continue;
+                        Console.WriteLine("Please enter a valid budget.");
+                        Pause();
+                        continue;
                     }
 
-                    break;
-                }
-
-                Directory.CreateDirectory(userFolder);
-
-                File.WriteAllLines(Path.Combine(userFolder, "Profile.txt"), new string[]
+                    Console.Write("\nTarget Grocery Savings ($): ");
+                    string savings = Console.ReadLine();
+                    double testSavings;
+                    if (string.IsNullOrEmpty(savings))
                     {
+                        Console.WriteLine();
+                        Console.WriteLine("Please enter an amount.\n");
+                        Pause();
+                        Console.Clear();
+                        continue;
+                    }
+
+                    else if (!double.TryParse(savings, out testSavings))
+                    {
+                        Console.WriteLine("Please enter a valid savings amount.");
+                        Pause();
+                        continue;
+                    }
+
+                    string visits = "";
+                    string members = "";
+
+                   
+                        Console.WriteLine("\nHow often do you go to the supermarket?\n");
+
+                        Console.WriteLine("[1] Every Week");
+                        Console.WriteLine("[2] Every 2 Weeks");
+                        Console.WriteLine("[3] Every 3 Weeks");
+                        Console.WriteLine("[4] Once a Month");
+
+                        Console.Write("\nChoice: ");
+
+                        string visitChoice = Console.ReadLine();
+
+                        switch (visitChoice)
+                        {
+                            case "1":
+                                visits = "Every Week";
+                                break;
+
+                            case "2":
+                                visits = "Every 2 Weeks";
+                                break;
+
+                            case "3":
+                                visits = "Every 3 Weeks";
+                                break;
+
+                            case "4":
+                                visits = "Once a Month";
+                                break;
+
+                            default:
+                                Console.WriteLine("\nInvalid choice.");
+                                Pause();
+                                continue;
+                        }
+
+                       
+
+
+                    
+                        Console.WriteLine("\nHow many family members are in your household?\n");
+
+                        Console.WriteLine("[1] 1 - 3 Family Members");
+                        Console.WriteLine("[2] 4 - 7 Family Members");
+                        Console.WriteLine("[3] 8 - 10 Family Members");
+                        Console.WriteLine("[4] More than 10 Family Members");
+
+                        Console.Write("\nChoice: ");
+
+                        string memberChoice = Console.ReadLine();
+
+                        switch (memberChoice)
+                        {
+                            case "1":
+                                members = "1-3";
+                                break;
+
+                            case "2":
+                                members = "4-7";
+                                break;
+
+                            case "3":
+                                members = "8-10";
+                                break;
+
+                            case "4":
+                                members = "10+";
+                                break;
+
+                            default:
+                                Console.WriteLine("\nInvalid choice.");
+                                Pause();
+                                continue;
+                        }
+
+                       
+                    Console.ResetColor();
+
+                    Directory.CreateDirectory(userFolder);
+
+                    File.WriteAllLines(Path.Combine(userFolder, "Profile.txt"), new string[]
+                        {
                     $"Username|{username}",
                     $"Password|{password}",
                     $"Gmail|{gmail}",
@@ -788,18 +848,19 @@ namespace ConsoleApp7
                     $"Savings|{savings}",
                     $"Visits|{visits}",
                     $"Members|{members}"
-                    });
+                        });
 
-                File.Create(Path.Combine(userFolder, "Inventory.txt")).Close();
-
-
-                File.Create(Path.Combine(userFolder, "SavingsHistory.txt")).Close();
+                    File.Create(Path.Combine(userFolder, "Inventory.txt")).Close();
 
 
-                Console.WriteLine("\nAccount Created Successfully!");
-                Pause();
-                Console.Clear();
-                return;
+                    File.Create(Path.Combine(userFolder, "SavingsHistory.txt")).Close();
+
+
+                    Console.WriteLine("\nAccount Created Successfully!");
+                    Pause();
+                    Console.Clear();
+                    return;
+                }
             }
         }
 
@@ -814,6 +875,9 @@ namespace ConsoleApp7
 
                 string profilePath = Path.Combine("Users", username, "Profile.txt");
 
+                if (username.ToUpper() == "B")
+                    return;
+
                 if (!File.Exists(profilePath))
                 {
                     Console.WriteLine("\nAccount not found please check username.");
@@ -825,6 +889,9 @@ namespace ConsoleApp7
 
                 Console.Write("Enter Gmail: ");
                 string gmail = Console.ReadLine();
+
+                if (gmail.ToUpper() == "B")
+                    return;
 
                 if (!gmail.EndsWith("@gmail.com"))
                 {
@@ -862,66 +929,81 @@ namespace ConsoleApp7
                 Console.Write("\nConfirm Gmail account(Y/N): ");
                 string confirmation = Console.ReadLine().ToLower();
 
-                if (confirmation != "y")
+                if (confirmation.ToUpper() == "B")
+                    return;
+
+                if (confirmation == "n")
                 {
                     Console.WriteLine("\nVerification cancelled.");
                     Pause();
                     Console.Clear();
                     continue;
                 }
-
-                Random rnd = new Random();
-                int numcode = rnd.Next(1000, 9999);
-
-                Console.WriteLine($"\nAn OTP has been sent to {gmail}");
-                Console.ReadKey();
-                Console.WriteLine($"\nHello {username}, your OTP is {numcode}");
-
-                Pause();
-                Header("CHANGE PASSWORD");
-
-                Console.WriteLine("=========================================");
-                Console.WriteLine("    PLEASE ENTER VERIFICATION CODE");
-                Console.WriteLine("=========================================\n");
-
-                Console.Write("Enter code: ");
-                string code = Console.ReadLine();
-                Console.WriteLine("----");
-
-                if (code != numcode.ToString())
+                else if (confirmation == "y")
                 {
-                    Console.WriteLine("Incorrect verification code. Would you like to try again?:");
+                    Random rnd = new Random();
+                    int numcode = rnd.Next(1000, 9999);
 
-                }
+                    Console.WriteLine($"\nAn OTP has been sent to {gmail}");
+                    Console.ReadKey();
+                    Console.WriteLine($"\nHello {username}, your OTP is {numcode}");
 
-                Console.Write("Enter New Password: ");
-                string newpass = Console.ReadLine();
-
-                Console.Write("Confirm New Password: ");
-                string confirmnewpass = Console.ReadLine();
-
-                if (newpass != confirmnewpass)
-                {
-
-                    Console.WriteLine("\nPasswords do not match.\n");
                     Pause();
-                    Console.Clear();
-                    continue;
+                    Header("CHANGE PASSWORD");
 
-                }
+                    Console.WriteLine("=========================================");
+                    Console.WriteLine("    PLEASE ENTER VERIFICATION CODE");
+                    Console.WriteLine("=========================================\n");
 
+                    Console.Write("Enter code: ");
+                    string code = Console.ReadLine();
+                    if (code.ToUpper() == "B")
+                        return;
+                    Console.WriteLine("----");
 
-
-                for (int i = 0; i < profile.Length; i++)
-                {
-                    if (profile[i].StartsWith("Password|"))
+                    if (code != numcode.ToString())
                     {
-                        profile[i] =
-                            $"Password|{newpass}";
+                        Console.WriteLine("Incorrect verification code. Please try again.");
+                        Pause();
+                        Console.Clear();
+                        continue;
                     }
+
+                    Console.Write("Enter New Password: ");
+                    string newpass = Console.ReadLine();
+
+                    if (newpass.ToUpper() == "B")
+                        return;
+
+                    Console.Write("Confirm New Password: ");
+                    string confirmnewpass = Console.ReadLine();
+
+                    if (confirmnewpass.ToUpper() == "B")
+                        return;
+
+                    if (newpass != confirmnewpass)
+                    {
+
+                        Console.WriteLine("\nPasswords do not match.\n");
+                        Pause();
+                        Console.Clear();
+                        continue;
+
+                    }
+
+                    for (int i = 0; i < profile.Length; i++)
+                    {
+                        if (profile[i].StartsWith("Password|"))
+                        {
+                            profile[i] =
+                                $"Password|{newpass}";
+                        }
+                    }
+
+                    File.WriteAllLines(profilePath, profile);
                 }
 
-                File.WriteAllLines(profilePath, profile);
+                
 
                 Console.WriteLine("\nPassword Updated Successfully!");
                 Pause();
@@ -940,12 +1022,11 @@ namespace ConsoleApp7
 
             List<string> planner = new List<string>();
 
-            // Clear old planner
             File.WriteAllText(inventoryPath, "");
 
             double spendingLimit = Budget - SavingsGoal;
 
-           
+
 
             if (Members == "1-3")
             {
@@ -992,9 +1073,7 @@ namespace ConsoleApp7
                 planner.Add("Fish|150|2|Essential");
             }
 
-            File.WriteAllLines(
-
-                Path.Combine(UserFolder,"Inventory.txt"),planner);
+            File.WriteAllLines(Path.Combine(UserFolder, "Inventory.txt"), planner);
 
             Console.WriteLine();
 
@@ -1009,15 +1088,7 @@ namespace ConsoleApp7
         {
             CalculateInventory();
 
-            if (CheckBudgetStatus())
-                return;
-
-            if (CheckOverConsumption())
-                return;
-
-            if (CheckMissingEssentialItems())
-                return;
-
+            Checker();
 
             RecordSavings();
 
@@ -1031,9 +1102,9 @@ namespace ConsoleApp7
 
             Console.ResetColor();
 
-            Console.WriteLine($"Total Cost: ₱{CurrentTotal}");
-            Console.WriteLine($"Savings: ₱{CurrentSavings}");
-            Console.WriteLine($"Remaining Budget: ₱{RemainingBudget}");
+            Console.WriteLine($"Total Cost: ${CurrentTotal}");
+            Console.WriteLine($"Savings: ${CurrentSavings}");
+            Console.WriteLine($"Remaining Budget: ${RemainingBudget}");
 
 
             Console.ResetColor();
@@ -1047,15 +1118,11 @@ namespace ConsoleApp7
 
         static void ViewInventory()
         {
-            string inventoryPath =
-               Path.Combine(UserFolder, "Inventory.txt");
-
-            string[] items =
-                File.ReadAllLines(inventoryPath);
+            List<InventoryItem> inventory = LoadInventory();
 
             double grandTotal = 0;
 
-            if (items.Length == 0)
+            if (inventory.Count == 0)
             {
                 Console.WriteLine("Inventory Empty.");
             }
@@ -1065,130 +1132,265 @@ namespace ConsoleApp7
                 Console.WriteLine($"{"ITEM",-15}{"PRICE",-8}{"QTY",-10}{"TOTAL"}");
                 Console.WriteLine("----------------------------------------------");
 
-                foreach (string item in items)
+                foreach (InventoryItem item in inventory)
                 {
-                    string[] data = item.Split('|');
-
-                    string name = data[0];
-
-                    double price = double.Parse(data[1]);
-
-                    int qty = int.Parse(data[2]);
+                    string name = item.Name;    
+                    double price = item.Price;
+                    int qty = item.Quantity;
 
                     double total = price * qty;
 
                     grandTotal += total;
 
-                    Console.WriteLine(
-                        $"{name,-15}{price,-8:C}{qty,-10}{total:C}");
+                    Console.WriteLine($"{name,-15}${price,-10}.00{qty,-8}${total}.00");
                 }
 
                 Console.WriteLine("----------------------------------------------");
-                Console.WriteLine($"{"", -33}Grand Total: {grandTotal:C}");
+                Console.WriteLine($"{"",-33}Grand Total: ${grandTotal}");
             }
         }
 
-        static void AddInventory()
-        {
-            Header("ADD ITEM");
-
-            Console.Write("Item Name: ");
-            string name = Console.ReadLine();
-
-            Console.Write("Price: $");
-            string price = Console.ReadLine();
-
-            Console.Write("Quantity: ");
-            string quantity = Console.ReadLine();
-
-            string inventoryPath =
-                Path.Combine(UserFolder, "Inventory.txt");
-
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(price) || string.IsNullOrEmpty(quantity))
+            static void AddInventory()
             {
-                Console.WriteLine();
-                Console.WriteLine("No information entered. Returning to menu...");
-                Console.ReadKey();
+
+            while (true)
+            {
+                Header("ADD ITEM");
+
+                List<InventoryItem> inventory = LoadInventory();
+
+                Console.Write("Item Name: ");
+                string name = Console.ReadLine();
+
+                if (name.ToUpper() == "B")
+                    return;
+
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    Error("Please enter an item name.");
+                    continue;
+                }
+
+                Console.Write("Price: $");
+                string priceInput = Console.ReadLine().Trim();
+
+                if (priceInput.Equals("B", StringComparison.OrdinalIgnoreCase))
+                    return;
+
+                if (!double.TryParse(priceInput, out double price) || price <= 0)
+                {
+                    Error("Please enter a valid price.");
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(priceInput))
+                {
+                    Error("Please enter an item name.");
+                    continue;
+                }
+
+                Console.Write("Quantity: ");
+                string quantityInput = Console.ReadLine().Trim();
+
+                if (quantityInput.Equals("B", StringComparison.OrdinalIgnoreCase))
+                    return;
+
+                if (!int.TryParse(quantityInput, out int quantity) || quantity <= 0)
+                {
+                    Error("Please enter a valid quantity.");
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(quantityInput))
+                {
+                    Error("Please enter a quantity.");
+                    continue;
+                }
+
+
+                if (price > Budget)
+                {
+                    Error("Price exceeds your grocery budget.");
+                    continue;
+                }
+
+                
+                if (quantity > 999)
+                {
+                    Error("Quantity is too large.");
+                    continue;
+                }
+
+                if (IsOverconsumed(name, quantity))
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+
+                    Console.WriteLine("\n==================================");
+                    Console.WriteLine(" POTENTIAL OVERCONSUMPTION");
+                    Console.WriteLine("==================================");
+
+                    Console.ResetColor();
+
+                    Console.WriteLine($"Recommended quantity: {GetRecommendedQuantity(name)}");
+
+                    Console.WriteLine("Please reduce the quantity.");
+
+                    Pause();
+                    continue;
+                }
+
+                string inventoryPath =
+                    Path.Combine(UserFolder, "Inventory.txt");
+
+                
+                Console.WriteLine("\nItem Added!");
+
+                string type = IsEssentialItem(name)
+                                ? "Essential"
+                                : "Optional";
+
+                File.AppendAllText(
+                    inventoryPath,
+                    $"{name}|{price}|{quantity}|{type}\n");
+
+                CalculateInventory();
+
+                Pause();
+
                 return;
             }
-
-
-
-            Console.WriteLine("\nItem Added!");
-
-            File.AppendAllText(
-            inventoryPath,
-            $"{name}|{price}|{quantity}|Optional\n");
-
-            CalculateInventory();
-
-            Pause();
+               
         }
 
         static void UpdateInventory()
         {
-            Console.Clear();
-
-            string inventoryPath =
-                Path.Combine(UserFolder, "Inventory.txt");
-
-            List<string> items =
-                File.ReadAllLines(inventoryPath).ToList();
-
-            Console.Write("Item Name: ");
-            string itemName = Console.ReadLine();
-
-            bool found = false;
-
-            for (int i = 0; i < items.Count; i++)
+            while (true)
             {
-                string[] data = items[i].Split('|');
+                Header("UPDATE ITEM");
 
-                if (data[0].ToLower() ==
-                    itemName.ToLower())
+                string inventoryPath =
+                    Path.Combine(UserFolder, "Inventory.txt");
+
+                List<string> items =
+                    File.ReadAllLines(inventoryPath).ToList();
+
+                Console.Write("Item Name: ");
+                string itemName = Console.ReadLine();
+
+                if (itemName.ToUpper() == "B")
+                    return;
+
+                if (string.IsNullOrWhiteSpace(itemName))
                 {
-                    Console.Write("New Quantity: ");
-
-                    string qty = Console.ReadLine();
-
-                    data[2] = qty;
-
-                    items[i] =
-                        string.Join("|", data);
-
-                    found = true;
-                    break;
+                    Error("Please enter an item name.");
+                    continue;
                 }
+
+                bool found = false;
+
+                for (int i = 0; i < items.Count; i++)
+                {
+                    string[] data = items[i].Split('|');
+
+                    if (data[0].Equals(itemName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        while (true)
+                        {
+                            Console.Write("New Quantity: ");
+                            string input = Console.ReadLine().Trim();
+
+                            if (!int.TryParse(input, out int quantity))
+                            {
+                                Error("Please enter a valid number.");
+                                continue;
+                            }
+
+                            if (string.IsNullOrWhiteSpace(input))
+                            {
+                                Error("Please enter a quantity.");
+                                continue;
+                            }
+
+                            if (quantity <= 0)
+                            {
+                                Error("Quantity must be greater than zero.");
+                                continue;
+                            }
+
+                            if (input.ToUpper() == "B")
+                                return;
+
+                            if (IsOverconsumed(itemName, quantity))
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+
+                                Console.WriteLine("\n==================================");
+                                Console.WriteLine(" POTENTIAL OVERCONSUMPTION");
+                                Console.WriteLine("==================================");
+
+                                Console.ResetColor();
+
+                                Console.WriteLine($"{itemName}\n\n");
+
+                                Console.WriteLine($"Current: {data[2]}\n");
+
+                                Console.WriteLine($"Recommended: {GetRecommendedQuantity(itemName)}\n");
+
+                                Console.WriteLine("GROCAP recommends reducing this item\r\nto prevent food waste.\r\n");
+
+                                Console.WriteLine("\nPlease enter a lower quantity.\n");
+
+                                continue;
+                            }
+
+                            data[2] = quantity.ToString();
+                            items[i] = string.Join("|", data);
+
+                            found = true;
+
+                            break;
+                        }
+
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    Error("Item not found.");
+                    continue;
+                }
+
+                
+                    File.WriteAllLines(inventoryPath, items);
+
+                    CalculateInventory();
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("\nQuantity Updated!");
+                    Console.ResetColor();
+                
+
+                Pause();
+                break;
             }
-
-            if (found)
-            {
-                File.WriteAllLines(
-                    inventoryPath,
-                    items);
-
-                Console.WriteLine("\nQuantity Updated!");
-            }
-            else
-            {
-                Console.WriteLine("\nItem Not Found.");
-            }
-
-            CalculateInventory();
-
-            Pause();
         }
+
 
         static void RemoveInventory()
         {
+            Header("REMOVE ITEM");
+
             string inventoryPath = Path.Combine(UserFolder, "Inventory.txt");
 
             List<string> items = File.ReadAllLines(inventoryPath).ToList();
 
             Console.Write("Item Name: ");
 
-            string name =
-                Console.ReadLine();
+            string name = Console.ReadLine();
+
+            if (name.ToUpper() == "B")
+                return;
 
             bool removed = false;
 
@@ -1226,8 +1428,7 @@ namespace ConsoleApp7
                             return;
                         }
                     }
-
-                    items.RemoveAt(i);
+                        items.RemoveAt(i);
 
                     removed = true;
 
@@ -1245,29 +1446,69 @@ namespace ConsoleApp7
             }
         }
 
+        static List<InventoryItem> LoadInventory()
+        {
+            List<InventoryItem> inventory =
+                new List<InventoryItem>();
+
+            string inventoryPath =
+                Path.Combine(UserFolder, "Inventory.txt");
+
+            if (!File.Exists(inventoryPath))
+                return inventory;
+
+            foreach (string line in File.ReadAllLines(inventoryPath))
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+
+                string[] data = line.Split('|');
+
+                inventory.Add(new InventoryItem
+                {
+                    Name = data[0],
+                    Price = double.Parse(data[1]),
+                    Quantity = int.Parse(data[2])
+                });
+            }
+
+            return inventory;
+        }
+
         //==================================================
         // CHECKING 
         //==================================================
 
+        static bool IsEssentialItem(string itemName)
+        {
+            return EssentialItems.Any(item => item.Equals(itemName, StringComparison.OrdinalIgnoreCase));
+        }
+
         static int GetRecommendedQuantity(string itemName)
         {
+            itemName = itemName.Trim().ToLower();
+
+            if (!IsEssentialItem(itemName))
+                return -1;
+        
+
             switch (Members)
             {
                 case "1-3":
 
                     switch (itemName)
                     {
-                        case "Rice": return 5;
-                        case "Eggs": return 30;
-                        case "Bread": return 2;
-                        case "Chicken": return 2;
-                        case "Fish": return 2;
-                        case "Milk": return 2;
-                        case "Water": return 12;
-                        case "Cooking Oil": return 1;
-                        case "Salt": return 1;
-                        case "Sugar": return 1;
-                        case "Vegetables": return 8;
+                        case "rice": return 5;
+                        case "eggs": return 30;
+                        case "bread": return 2;
+                        case "chicken": return 2;
+                        case "fish": return 2;
+                        case "milk": return 2;
+                        case "water": return 12;
+                        case "cooking oil": return 1;
+                        case "salt": return 1;
+                        case "sugar": return 1;
+                        case "vegetables": return 8;
                     }
 
                     break;
@@ -1276,17 +1517,17 @@ namespace ConsoleApp7
 
                     switch (itemName)
                     {
-                        case "Rice": return 10;
-                        case "Eggs": return 60;
-                        case "Bread": return 4;
-                        case "Chicken": return 4;
-                        case "Fish": return 4;
-                        case "Milk": return 4;
-                        case "Water": return 24;
-                        case "Cooking Oil": return 2;
-                        case "Salt": return 2;
-                        case "Sugar": return 2;
-                        case "Vegetables": return 15;
+                        case "rice": return 10;
+                        case "eggs": return 60;
+                        case "bread": return 4;
+                        case "chicken": return 4;
+                        case "fish": return 4;
+                        case "milk": return 4;
+                        case "water": return 24;
+                        case "cooking oil": return 2;
+                        case "salt": return 2;
+                        case "sugar": return 2;
+                        case "vegetables": return 15;
                     }
 
                     break;
@@ -1295,17 +1536,17 @@ namespace ConsoleApp7
 
                     switch (itemName)
                     {
-                        case "Rice": return 15;
-                        case "Eggs": return 90;
-                        case "Bread": return 6;
-                        case "Chicken": return 6;
-                        case "Fish": return 6;
-                        case "Milk": return 6;
-                        case "Water": return 36;
-                        case "Cooking Oil": return 3;
-                        case "Salt": return 3;
-                        case "Sugar": return 3;
-                        case "Vegetables": return 20;
+                        case "rice": return 15;
+                        case "eggs": return 90;
+                        case "bread": return 6;
+                        case "chicken": return 6;
+                        case "fish": return 6;
+                        case "milk": return 6;
+                        case "water": return 36;
+                        case "cooking oil": return 3;
+                        case "salt": return 3;
+                        case "sugar": return 3;
+                        case "vegetables": return 20;
                     }
 
                     break;
@@ -1313,190 +1554,162 @@ namespace ConsoleApp7
                 default:        //10+
                     switch (itemName)
                     {
-                        case "Rice": return 20;
-                        case "Eggs": return 120;
-                        case "Bread": return 8;
-                        case "Chicken": return 8;
-                        case "Fish": return 8;
-                        case "Milk": return 8;
-                        case "Water": return 48;
-                        case "Cooking Oil": return 4;
-                        case "Salt": return 4;
-                        case "Sugar": return 4;
-                        case "Vegetables": return 30;
+                        case "rice": return 20;
+                        case "eggs": return 120;
+                        case "bread": return 8;
+                        case "chicken": return 8;
+                        case "fish": return 8;
+                        case "milk": return 8;
+                        case "water": return 48;
+                        case "cooking oil": return 4;
+                        case "salt": return 4;
+                        case "sugar": return 4;
+                        case "vegetables": return 30;
                     }
 
                     break;
             }
-
-            return int.MaxValue;     // Optional items are never considered overconsumed
+            return -1;
         }
 
         static bool IsOverconsumed(string itemName, int quantity)
         {
-            int recommended =
-                GetRecommendedQuantity(itemName);
+            int recommended = GetRecommendedQuantity(itemName);
+
+            if (recommended == -1)
+                return false;
 
             return quantity > recommended;
         }
 
 
-        static bool CheckOverConsumption()
+        static void CheckOverConsumption()
         {
-            bool found = false;
+            List<InventoryItem> inventory =
+                LoadInventory();
 
-            string[] inventory =
-                File.ReadAllLines(Path.Combine(UserFolder, "Inventory.txt"));
-
-            foreach (string line in inventory)
+            foreach (InventoryItem item in inventory)
             {
-                string[] data = line.Split('|');
-
-                string item = data[0];
-
-                int qty = int.Parse(data[2]);
-
-                if (IsOverconsumed(item, qty))
+                if (IsOverconsumed(item.Name, item.Quantity))
                 {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.ForegroundColor =
+                        ConsoleColor.Yellow;
 
-                    Console.WriteLine("\n==================================");
-                    Console.WriteLine(" POTENTIAL OVERCONSUMPTION");
-                    Console.WriteLine("==================================");
+                    Console.WriteLine();
 
-                    Console.WriteLine(item);
+                    Console.WriteLine(item.Name);
 
-                    Console.WriteLine($"Current Quantity : {qty}");
+                    Console.WriteLine(
+                        $"Current: {item.Quantity}");
 
-                    Console.WriteLine($"Recommended      : {GetRecommendedQuantity(item)}");
+                    Console.WriteLine(
+                        $"Recommended: {GetRecommendedQuantity(item.Name)}");
 
                     Console.ResetColor();
-
-                    found = true;
                 }
             }
-
-            if (found)
-                Pause();
-
-            return found;
         }
 
 
-        static bool CheckMissingEssentialItems()
+        static void CheckMissingEssentialItems()
         {
-            bool missing = false;
+            List<InventoryItem> inventory = LoadInventory();
 
-            string inventoryPath =
-                Path.Combine(UserFolder, "Inventory.txt");
-
-            List<string> inventory =
-                File.ReadAllLines(inventoryPath).ToList();
-
-            foreach (string essential in inventory)
+            foreach (string essential in EssentialItems)
             {
-                bool exists = false;
+                bool exists = inventory.Any
+                (
+                    item => item.Name.Equals(essential,StringComparison.OrdinalIgnoreCase)
+                );
 
-                foreach (string line in inventory)
+                foreach (InventoryItem item in inventory)
                 {
-                    string[] data = line.Split('|');
-
-                    string itemName = data[0];
-
-                    if (itemName.Equals(essential,
-                        StringComparison.OrdinalIgnoreCase))
+                    if (item.Name.Equals(essential, StringComparison.OrdinalIgnoreCase))
                     {
                         exists = true;
                         break;
                     }
                 }
+
                 if (!exists)
                 {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.ForegroundColor =
+                        ConsoleColor.Yellow;
 
-                    Console.WriteLine($"\nMissing Essential Item: {essential}");
+                    Console.WriteLine(
+                        $"Missing Essential Item: {essential}");
 
                     Console.ResetColor();
-
-                    missing = true;
                 }
             }
-
-            if (missing)
-                Pause();
-
-            return missing;
         }
-        
 
-        static bool CheckBudgetStatus()
+        static void CheckBudgetStatus()
         {
             CalculateInventory();
 
             if (CurrentTotal <= Budget)
-                return false;
+                return;
 
-          
+            if (CurrentTotal >= Budget * .90)
+            {
                 double needed = CurrentTotal - Budget;
 
-            if (needed <= SavingsGoal)
-            {
+                if (needed <= SavingsGoal)
+                {
 
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine();
-                Console.WriteLine("==================================");
-                Console.WriteLine("       SAVINGS AT RISK");
-                Console.WriteLine("==================================");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine();
+                    Console.WriteLine("==================================");
+                    Console.WriteLine("       SAVINGS AT RISK");
+                    Console.WriteLine("==================================");
 
-                Console.ResetColor();
+                    Console.ResetColor();
 
-                Console.WriteLine($"Budget           : ₱{Budget}");
-                Console.WriteLine($"Current Basket   : ₱{CurrentTotal}");
-                Console.WriteLine($"Savings Goal     : ₱{SavingsGoal}");
-                Console.WriteLine($"Savings Needed   : ₱{needed}");
+                    Console.WriteLine($"Budget           : ${Budget}");
+                    Console.WriteLine($"Current Basket   : ${CurrentTotal}");
+                    Console.WriteLine($"Savings Goal     : ${SavingsGoal}");
+                    Console.WriteLine($"Savings Needed   : ${needed}");
 
-                Console.WriteLine();
+                    Console.WriteLine();
 
-                Console.WriteLine("Adding this item exceeds your grocery budget.");
-                Console.WriteLine("Your savings will be used to complete this purchase.");
+                    Console.WriteLine("Adding this item exceeds your grocery budget.");
+                    Console.WriteLine("Your savings will be used to complete this purchase.");
 
-                Pause();
+                    Pause();
 
-                return false;
+
+                }
+
+                else
+                {
+                    double excess = CurrentTotal - (Budget + SavingsGoal);
+
+                    Console.ForegroundColor = ConsoleColor.Red;
+
+                    Console.WriteLine();
+                    Console.WriteLine("==================================");
+                    Console.WriteLine("      ERROR: BUDGET BLOWN");
+                    Console.WriteLine("==================================");
+
+                    Console.ResetColor();
+
+                    Console.WriteLine($"Current Basket : ${CurrentTotal}");
+                    Console.WriteLine($"Budget         : ${Budget}");
+                    Console.WriteLine($"Savings Goal   : ${SavingsGoal}");
+
+                    Console.WriteLine();
+
+                    Console.WriteLine($"You are ${excess} over your available funds.");
+                    Console.WriteLine();
+
+                    Console.WriteLine($"Remove approximately ${Math.Ceiling(excess / 100) * 100:N0} worth of items.");
+
+                    Pause();
+                }
             }
+        }
 
-            else
-            {
-                double excess = CurrentTotal - (Budget + SavingsGoal);
-
-                Console.ForegroundColor = ConsoleColor.Red;
-
-                Console.WriteLine();
-                Console.WriteLine("==================================");
-                Console.WriteLine("      ERROR: BUDGET BLOWN");
-                Console.WriteLine("==================================");
-
-                Console.ResetColor();
-
-                Console.WriteLine($"Current Basket : ₱{CurrentTotal}");
-                Console.WriteLine($"Budget         : ₱{Budget}");
-                Console.WriteLine($"Savings Goal   : ₱{SavingsGoal}");
-
-                Console.WriteLine();
-
-                Console.WriteLine($"You are ₱{excess} over your available funds.");
-
-                Console.WriteLine();
-
-                Console.WriteLine($"Remove approximately ₱{Math.Ceiling(excess / 100) * 100:N0} worth of items.");
-
-                Pause();
-
-                return true;
-            }
-       }
-        
-        
 
         static void Checker()
         {
@@ -1511,42 +1724,28 @@ namespace ConsoleApp7
 
 
         static void CalculateInventory()
+        {
+            List<InventoryItem> inventory =
+                LoadInventory();
+
+            CurrentTotal = 0;
+
+            foreach (InventoryItem item in inventory)
             {
-                CurrentTotal = 0;
-
-                string inventoryPath =
-                    Path.Combine(UserFolder, "Inventory.txt");
-
-                foreach (string line in File.ReadAllLines(inventoryPath))
-                {
-                    string[] data = line.Split('|');
-
-                    double price = double.Parse(data[1]);
-
-                    int qty = int.Parse(data[2]);
-
-                    CurrentTotal += price * qty;
-                }
-
-                RecommendedSpending = Budget - SavingsGoal;
-
-                if (CurrentTotal <= RecommendedSpending)
-                {
-                    SavingsUsed = 0;
-
-                    CurrentSavings = Budget - CurrentTotal;
-                }
-                else
-                {
-                    SavingsUsed = CurrentTotal - RecommendedSpending;
-
-                    CurrentSavings = SavingsGoal - SavingsUsed;
-
-                    if (CurrentSavings < 0)
-                        CurrentSavings = 0;
-                }
+                CurrentTotal +=
+                    item.Price *
+                    item.Quantity;
             }
-        
+
+            RemainingBudget =
+                Budget - CurrentTotal;
+
+            CurrentSavings =
+                RemainingBudget < SavingsGoal
+                ? RemainingBudget
+                : SavingsGoal;
+        }
+
 
         static void RecordSavings()
         {
@@ -1604,12 +1803,12 @@ namespace ConsoleApp7
                     case "RecommendedSpending":
                         RecommendedSpending =
                             Budget - SavingsGoal;
-                        break;  
+                        break;
                 }
             }
         }
 
-        static void SaveProfile(string gmail,string budget,string savings,string visits,string members)
+        static void SaveProfile(string gmail, string budget, string savings, string visits, string members)
         {
             string profilePath =
                 Path.Combine(UserFolder, "Profile.txt");
@@ -1685,12 +1884,19 @@ namespace ConsoleApp7
              ██║   ██║██╔══██╗██║   ██║██║     ██╔══██║██╔═══╝
              ╚██████╔╝██║  ██║╚██████╔╝╚██████╗██║  ██║██║
               ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝
+                                    
+                              
+                   Grocery Consumption Analysis Planner
+
+               SDG 12: Responsible Consumption & Production
+
+                              (B = Back)  
 
 ");
 
             Console.ResetColor();
 
-            Console.WriteLine($"==================== {title} ====================\n");
+            Console.WriteLine($"========================= {title} =========================\n");
         }
 
         static void Pause()
