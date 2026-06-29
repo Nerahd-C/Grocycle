@@ -25,6 +25,8 @@ namespace ConsoleApp7
         static double RemainingBudget = 0;
         static double CurrentSavings = 0;
 
+        static double ShoppingLimit = 0;
+
         static double SavingsUsed = 0;
 
         static double RecommendedSpending = 0;
@@ -89,13 +91,14 @@ namespace ConsoleApp7
 
         static void Dashboard()
         {
+            
             while (true)
             {
                 LoadProfile();
 
                 CalculateInventory();
 
-                Header("DASHBOARD");
+                Header("DASHBOARD");    
 
                 Console.WriteLine($"Welcome, {CurrentUser}!");
 
@@ -123,8 +126,16 @@ namespace ConsoleApp7
                 Console.WriteLine("[5] Logout");
 
                 Console.Write("\nChoice: ");
+                string choice = Console.ReadLine();
 
-                switch (Console.ReadLine())
+                if (string.IsNullOrEmpty(choice))
+                {
+                    Error("\nPlease input an option.");
+                    Console.Clear();
+                    continue;
+                }
+
+                switch (choice)
                 {
                     case "1":
 
@@ -172,45 +183,45 @@ namespace ConsoleApp7
 
         static void PlannerConfirmation()
         {
-
-            Header("PLANNER");
-
-            Console.Write("Would you like GROCAP to generate your grocery planner? (Y/N): ");
-
-            string choice =
-                Console.ReadLine().ToUpper();
-
-            if (choice == "Y")
+            while (true)
             {
-                GroceryPlanner();
+                Header("PLANNER");
 
-                InventoryMenu();
+                Console.Write("Would you like GROCAP to generate your grocery planner? (Y/N): ");
+
+                string choice =
+                    Console.ReadLine().ToUpper();
+
+                if (choice == "Y")
+                {
+                    GroceryPlanner();
+                }
+
+                else if (choice == "N")
+                {
+                    break;
+                }
+
+                else
+                {
+                    Error("Invalid choice.");
+                }
             }
 
-            else if (choice == "N")
-            {
-                InventoryMenu();
-            }
-
-            else
-            {
-                Error("Invalid choice.");
-            }
-
-
+            InventoryMenu();
         }
 
         static void InventoryMenu()
         {
+            
+
             while (true)
             {
                 Header("INVENTORY");
 
                 ViewInventory();
 
-                Console.WriteLine();
-
-                Console.WriteLine("[1] Add Item");
+                Console.WriteLine("\n[1] Add Item");
 
                 Console.WriteLine("[2] Update Quantity");
 
@@ -220,8 +231,15 @@ namespace ConsoleApp7
 
                 Console.WriteLine("[5] Back to Dashboard");
 
-                Console.WriteLine("\nChoice: ");
+                Console.Write("\nChoice: \n");
                 string choice = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(choice))
+                {
+                    Error("\nPlease input an option.");
+                    continue;
+                }
+
 
                 switch (choice)
                 {
@@ -285,6 +303,14 @@ namespace ConsoleApp7
                 double savings = double.Parse(data[1]);
                 Console.WriteLine($"{date}: ${savings}");
             }
+
+            Console.WriteLine("--------------------------------");
+
+            Console.WriteLine("Savings Goal: $" + SavingsGoal);
+
+            Console.WriteLine("\nStore Vists: " + Visits);  
+
+
 
             Pause();
         }
@@ -620,6 +646,16 @@ namespace ConsoleApp7
                 {
                     Console.WriteLine();
                     Console.WriteLine("Please enter a username.\n");
+                    Pause();
+                    Console.Clear();
+                    continue;
+                }
+
+                if (!Regex.IsMatch(username, @"^[a-zA-Z][a-zA-Z0-9._]{1,}$"))
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Invalid username format.");
+                    Console.WriteLine("Example: juan123/Juan.");
                     Pause();
                     Console.Clear();
                     continue;
@@ -1142,7 +1178,7 @@ namespace ConsoleApp7
 
                     grandTotal += total;
 
-                    Console.WriteLine($"{name,-15}${price,-10}.00{qty,-8}${total}.00");
+                    Console.WriteLine($"{name,-15}${price + ".00",-10}{qty,-8}${total}.00");
                 }
 
                 Console.WriteLine("----------------------------------------------");
@@ -1155,7 +1191,7 @@ namespace ConsoleApp7
 
             while (true)
             {
-                Header("ADD ITEM");
+                Console.Clear();
 
                 List<InventoryItem> inventory = LoadInventory();
 
@@ -1266,7 +1302,7 @@ namespace ConsoleApp7
         {
             while (true)
             {
-                Header("UPDATE ITEM");
+               
 
                 string inventoryPath =
                     Path.Combine(UserFolder, "Inventory.txt");
@@ -1379,7 +1415,7 @@ namespace ConsoleApp7
 
         static void RemoveInventory()
         {
-            Header("REMOVE ITEM");
+          
 
             string inventoryPath = Path.Combine(UserFolder, "Inventory.txt");
 
@@ -1622,93 +1658,99 @@ namespace ConsoleApp7
                     item => item.Name.Equals(essential,StringComparison.OrdinalIgnoreCase)
                 );
 
-                foreach (InventoryItem item in inventory)
-                {
-                    if (item.Name.Equals(essential, StringComparison.OrdinalIgnoreCase))
-                    {
-                        exists = true;
-                        break;
-                    }
-                }
-
+                
                 if (!exists)
                 {
                     Console.ForegroundColor =
                         ConsoleColor.Yellow;
 
                     Console.WriteLine(
-                        $"Missing Essential Item: {essential}");
+                        $"\n\nMissing Essential Item: {essential}");
 
                     Console.ResetColor();
                 }
             }
         }
 
-        static void CheckBudgetStatus()
+        static bool CheckBudgetStatus()
         {
             CalculateInventory();
 
-            if (CurrentTotal <= Budget)
-                return;
+            double shoppingLimit = Budget - SavingsGoal;
 
-            if (CurrentTotal >= Budget * .90)
+            
+            if (CurrentTotal <= shoppingLimit)
             {
-                double needed = CurrentTotal - Budget;
+                Console.ForegroundColor = ConsoleColor.Green;
 
-                if (needed <= SavingsGoal)
-                {
+                Console.WriteLine();
+                Console.WriteLine("==================================");
+                Console.WriteLine("      WITHIN SHOPPING LIMIT");
+                Console.WriteLine("==================================");
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine();
-                    Console.WriteLine("==================================");
-                    Console.WriteLine("       SAVINGS AT RISK");
-                    Console.WriteLine("==================================");
+                Console.ResetColor();
 
-                    Console.ResetColor();
+                Console.WriteLine($"Shopping Limit : ${shoppingLimit}");
+                Console.WriteLine($"Current Total  : ${CurrentTotal}");
+                Console.WriteLine($"Savings Kept   : ${ CurrentSavings}");
 
-                    Console.WriteLine($"Budget           : ${Budget}");
-                    Console.WriteLine($"Current Basket   : ${CurrentTotal}");
-                    Console.WriteLine($"Savings Goal     : ${SavingsGoal}");
-                    Console.WriteLine($"Savings Needed   : ${needed}");
+                Console.WriteLine("\nGreat! Your savings goal is still intact.");
 
-                    Console.WriteLine();
-
-                    Console.WriteLine("Adding this item exceeds your grocery budget.");
-                    Console.WriteLine("Your savings will be used to complete this purchase.");
-
-                    Pause();
-
-
-                }
-
-                else
-                {
-                    double excess = CurrentTotal - (Budget + SavingsGoal);
-
-                    Console.ForegroundColor = ConsoleColor.Red;
-
-                    Console.WriteLine();
-                    Console.WriteLine("==================================");
-                    Console.WriteLine("      ERROR: BUDGET BLOWN");
-                    Console.WriteLine("==================================");
-
-                    Console.ResetColor();
-
-                    Console.WriteLine($"Current Basket : ${CurrentTotal}");
-                    Console.WriteLine($"Budget         : ${Budget}");
-                    Console.WriteLine($"Savings Goal   : ${SavingsGoal}");
-
-                    Console.WriteLine();
-
-                    Console.WriteLine($"You are ${excess} over your available funds.");
-                    Console.WriteLine();
-
-                    Console.WriteLine($"Remove approximately ${Math.Ceiling(excess / 100) * 100:N0} worth of items.");
-
-                    Pause();
-                }
+                return false;
             }
+
+            
+            if (CurrentTotal <= Budget)
+            {
+                double savingsUsed = CurrentTotal - shoppingLimit;
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+
+                Console.WriteLine();
+                Console.WriteLine("==================================");
+                Console.WriteLine("        SAVINGS AT RISK");
+                Console.WriteLine("==================================");
+
+                Console.ResetColor();
+
+                Console.WriteLine($"Shopping Limit : ₱{shoppingLimit}");
+                Console.WriteLine($"Current Total  : ₱{CurrentTotal}");
+                Console.WriteLine($"Savings Used   : ₱{savingsUsed}");
+                Console.WriteLine($"Savings Left   : ₱{CurrentSavings}");
+
+                Console.WriteLine();
+                Console.WriteLine("Your grocery total has exceeded the shopping limit.");
+                Console.WriteLine("Part of your savings goal has been used.");
+
+                Pause();
+                return true;
+            }
+
+            
+            double excess = CurrentTotal - Budget;
+
+            Console.ForegroundColor = ConsoleColor.Red;
+
+            Console.WriteLine();
+            Console.WriteLine("==================================");
+            Console.WriteLine("       BUDGET EXCEEDED");
+            Console.WriteLine("==================================");
+
+            Console.ResetColor();
+
+            Console.WriteLine($"Budget         : ₱{Budget}");
+            Console.WriteLine($"Current Total  : ₱{CurrentTotal}");
+            Console.WriteLine($"Over Budget    : ₱{excess}");
+
+            Console.WriteLine();
+            Console.WriteLine("Your grocery cart exceeds both your shopping limit and your total budget.");
+            Console.WriteLine("Please remove some items before finalizing your grocery plan.");
+
+            Pause();
+
+            return true;
         }
+        
 
 
         static void Checker()
@@ -1725,25 +1767,40 @@ namespace ConsoleApp7
 
         static void CalculateInventory()
         {
-            List<InventoryItem> inventory =
-                LoadInventory();
+            List<InventoryItem> inventory = LoadInventory();
 
             CurrentTotal = 0;
 
             foreach (InventoryItem item in inventory)
             {
-                CurrentTotal +=
-                    item.Price *
-                    item.Quantity;
+                CurrentTotal += item.Price * item.Quantity;
             }
 
-            RemainingBudget =
-                Budget - CurrentTotal;
+            
+            double shoppingLimit = Budget - SavingsGoal;
 
-            CurrentSavings =
-                RemainingBudget < SavingsGoal
-                ? RemainingBudget
-                : SavingsGoal;
+            RemainingBudget = shoppingLimit - CurrentTotal;
+
+            if (CurrentTotal <= shoppingLimit)
+            {
+                
+                CurrentSavings = SavingsGoal;
+            }
+            else
+            {
+                
+                double savingsUsed = CurrentTotal - shoppingLimit;
+
+                CurrentSavings = SavingsGoal - savingsUsed;
+
+                if (CurrentSavings < 0)
+                    CurrentSavings = 0;
+            }
+
+            CurrentSavings = Budget - CurrentTotal;
+
+            if (CurrentSavings < 0)
+                CurrentSavings = 0;
         }
 
 
@@ -1754,7 +1811,7 @@ namespace ConsoleApp7
 
             File.AppendAllText(
                 historyPath,
-                $"{DateTime.Now:MM/dd/yyyy}|{CurrentTotal}|{CurrentSavings}\n");
+                $"{DateTime.Now:MM/dd/yyyy}|{CurrentSavings}\n");
         }
 
         //==================================================
@@ -1902,7 +1959,7 @@ namespace ConsoleApp7
         static void Pause()
         {
             Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
+            Console.ReadKey(true);
         }
 
         static void Error(string message)
