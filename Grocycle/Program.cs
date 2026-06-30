@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -231,7 +232,7 @@ namespace ConsoleApp7
 
                 Console.WriteLine("[5] Back to Dashboard");
 
-                Console.Write("\nChoice: \n");
+                Console.Write("\nChoice: ");
                 string choice = Console.ReadLine();
 
                 if (string.IsNullOrEmpty(choice))
@@ -505,7 +506,14 @@ namespace ConsoleApp7
                     break;
                 }
                 SaveProfile(gmail, budget, savings, visits, members);
-                
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\nProfile Updated!");
+                Console.ResetColor();
+
+                Pause();
+                return;
+
             }
         }
 
@@ -534,7 +542,13 @@ namespace ConsoleApp7
                     continue;
                 }
 
-                Console.Write("Password: ");
+                else if (string.IsNullOrEmpty(username)) 
+                { 
+                    Error("Please enter a username.");
+                    continue;
+                }
+
+                    Console.Write("Password: ");
                 string password = Console.ReadLine();
 
                 if (password.ToUpper() == "B")
@@ -570,7 +584,13 @@ namespace ConsoleApp7
 
                     else if (answer == "N")
                     {
-                        Console.WriteLine("\nPlease retry password.");
+                        Error("\nPlease retry password.");
+                        continue;
+                    }
+
+                    else if(string.IsNullOrEmpty(answer))
+                    {
+                        Error("Please input an option.");
                         continue;
                     }
 
@@ -598,7 +618,7 @@ namespace ConsoleApp7
 
                 Header("SIGN UP");
 
-                Console.Write("Enter Email: ");
+                Console.Write("Enter Email (@gmail.com): ");
                 string gmail = Console.ReadLine().Trim().ToLower();
 
                 if (gmail.ToUpper() == "B")
@@ -721,23 +741,24 @@ namespace ConsoleApp7
                 Console.WriteLine("Before we set up your account, we would like to ask a few brief questions to customize your experience. Please take a moment to review our Terms and Conditions below.\n\n");
 
                 Console.WriteLine("I consent to the collection, use, storage, sharing, and processing of my personal data by the Social Security System (SSS) in accordance with the Data Privacy Act (DPA) and its Implementing Rules and Regulations (IRR). I affirm my rights as a data subject, including the rights to be informed, object, access, correct or dispute inaccuracies, suspend or withdraw my data, data portability, and to be indemnified for damages. I also understand my right to file a complaint with the National Privacy Commission (NPC) for any violation of my data privacy rights.\n\n");
-                Console.WriteLine("[1]I do not consent.\n[2] I consent.");
+                Console.WriteLine("[1] I consent.\n[2] I do not consent.");
                 Console.WriteLine("---------------------------");
                 string consent = Console.ReadLine();
 
                 switch (consent)
                 {
                     case "1":
+                       
+                        Pause();
+                        Console.Clear();
+                        break;
+
+
+                    case "2":
                         Console.WriteLine("You must consent to create an account.");
                         Pause();
                         Console.Clear();
                         return;
-
-
-                    case "2":
-                        Pause();
-                        Console.Clear();
-                        break;
 
                     default:
                         Console.WriteLine("Invalid choice.");
@@ -752,8 +773,8 @@ namespace ConsoleApp7
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.Clear();
-                    Console.WriteLine("Please enter your target grocery budget and savings goal.\n"); 
-                    Console.Write("\nTarget Grocery Budget ($): ");
+                    Console.WriteLine("Choose the budget that matches your shopping frequency (e.g., your weekly budget if you shop every week).\n"); 
+                    Console.Write("\nTarget Grocery Budget (e.g., $1000): ");
                     string budget = Console.ReadLine();
                     double testBudget;
 
@@ -773,7 +794,8 @@ namespace ConsoleApp7
                         continue;
                     }
 
-                    Console.Write("\nTarget Grocery Savings ($): ");
+                    Console.WriteLine("\nChoose the target savings that matches your shopping frequency (e.g., your weekly target savings if you shop every week).\n");
+                    Console.Write("\nTarget Grocery Savings (e.g., $500 ): ");
                     string savings = Console.ReadLine();
                     double testSavings;
                     if (string.IsNullOrEmpty(savings))
@@ -1415,7 +1437,10 @@ namespace ConsoleApp7
 
         static void RemoveInventory()
         {
-          
+
+            Console.Clear();
+
+            bool removed = false;
 
             string inventoryPath = Path.Combine(UserFolder, "Inventory.txt");
 
@@ -1428,7 +1453,7 @@ namespace ConsoleApp7
             if (name.ToUpper() == "B")
                 return;
 
-            bool removed = false;
+            int index = -1;
 
             for (int i = 0; i < items.Count; i++)
             {
@@ -1436,8 +1461,50 @@ namespace ConsoleApp7
 
                 if (data[0].Equals(name, StringComparison.OrdinalIgnoreCase))
                 {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index == -1)
+            {
+                Error("Item not found.");
+                return;
+            }
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write($"Are you sure you want to remove {name} from your inventory?(Y/N): ");
+            Console.ResetColor();
+            string choice = Console.ReadLine().ToUpper();
+
+
+            if (choice == "N")
+            {
+                Console.WriteLine("\nRemoval cancelled.");
+                return;
+            }
+
+            else if (choice != "Y")
+            {
+                Error("Invalid choice. Please enter Y or N.");
+                return;
+            }
+
+            else if (choice == "Y")
+            {
+                string[] item = items[index].Split('|');
+
+                if (item[0].Equals(name, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Item is optional
+                    if (item[3] == "Optional")
+                    {
+                        Console.WriteLine("Item removed from inventory.");
+                        Pause();
+                    }
+
                     // Item belongs to the planner (essential)
-                    if (data[3] == "Essential")
+                    else if (item[3] == "Essential")
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
 
@@ -1447,16 +1514,21 @@ namespace ConsoleApp7
 
                         Console.ResetColor();
 
-                        Console.WriteLine($"{data[0]} is part of your recommended grocery planner.");
+                        Console.WriteLine($"{item[0]} is part of your recommended grocery planner.");
 
                         Console.WriteLine("Removing it may affect your grocery plan.");
 
                         Console.Write("\nRemove anyway? (Y/N): ");
 
-                        string confirm =
-                            Console.ReadLine().ToUpper();
+                        string confirm = Console.ReadLine().ToUpper();
 
-                        if (confirm != "Y")
+                        if (confirm == "Y")
+                        {
+                            Console.WriteLine("\nItem removed from inventory.");
+                            Pause();
+                        }
+
+                        else if (confirm == "N")
                         {
                             Console.WriteLine("\nRemoval cancelled.");
 
@@ -1464,7 +1536,8 @@ namespace ConsoleApp7
                             return;
                         }
                     }
-                        items.RemoveAt(i);
+
+                    items.RemoveAt(index);
 
                     removed = true;
 
@@ -1474,13 +1547,15 @@ namespace ConsoleApp7
 
                         CalculateInventory();
 
-                        Console.WriteLine("Item Removed!");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("\nItem removed successfully.");
+                        Console.ResetColor();
                     }
-
-                    break;
                 }
             }
         }
+        
+        
 
         static List<InventoryItem> LoadInventory()
         {
